@@ -20,7 +20,7 @@
             app:menu="@menu/bottom_nav_menu"/>
 
     <Button
-        android:id="@+id/myButton"
+        android:id="@+id/startGameButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_game"
@@ -41,5 +41,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navGraph="@navigation/mobile_navigation"
     />
+
+    <FrameLayout
+        android:id="@+id/game_container"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        app:layout_constraintEnd_toEndOf="@+id/nav_host_fragment_activity_main"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/nav_host_fragment_activity_main">
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

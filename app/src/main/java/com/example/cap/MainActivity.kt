@@ -1,6 +1,7 @@
 package com.example.cap
 
 import android.os.Bundle
+import android.widget.Button
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -8,6 +9,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.cap.databinding.ActivityMainBinding
+import com.example.cap.ui.game.dontTouchGame.DontTouchGameFragment
+import com.example.cap.ui.game.linkGame.LinkGameFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,7 +32,25 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
             )
         )
+
+        val startGameBotton: Button = findViewById(R.id.startGameButton)
+        startGameBotton.setOnClickListener {
+            showGameDialog()
+        }
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    private fun showGameDialog() {
+        val gameFragments = listOf(
+            LinkGameFragment(),
+            DontTouchGameFragment()
+        )
+        val selectedGameFragment = gameFragments.random()
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.game_container, selectedGameFragment)
+            .commit()
     }
 }
