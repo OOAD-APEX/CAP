@@ -9,8 +9,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.cap.databinding.ActivityMainBinding
-import com.example.cap.ui.game.dontTouchGame.DontTouchGameFragment
-import com.example.cap.ui.game.linkGame.LinkGameFragment
+import com.example.cap.ui.game.dontTouchGame.DontTouchGameDialog
+import com.example.cap.ui.game.linkGame.LinkGameDialog
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,14 +43,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showGameDialog() {
-        val gameFragments = listOf(
-            LinkGameFragment(),
-            DontTouchGameFragment()
+        val gameDialogs = listOf(
+            LinkGameDialog(this)
+//            DontTouchGameDialog(this)
         )
-        val selectedGameFragment = gameFragments.random()
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.game_container, selectedGameFragment)
-            .commit()
+        val selectedGameDialog = gameDialogs.random()
+        selectedGameDialog.show()
     }
 }

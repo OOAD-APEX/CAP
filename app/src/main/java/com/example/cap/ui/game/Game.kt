@@ -5,6 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-interface GameFragment {
-    fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+interface Game {
+    fun onCreate(savedInstanceState: Bundle?) {
+    }
+
+    fun startGame() {
+    }
+
+    fun endGame() {
+    }
 }
