@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 class AlarmViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "Alarm"
+        value = "8 : 00 AM"
     }
 
     val text: LiveData<String> = _text
