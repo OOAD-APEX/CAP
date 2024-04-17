@@ -1,6 +1,10 @@
 package com.example.cap.ui.alarm
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +48,12 @@ class AlarmFragment : Fragment() {
                 cal.set(Calendar.HOUR_OF_DAY, hour)
                 cal.set(Calendar.MINUTE, minute)
                 tvTime.text = SimpleDateFormat("HH:mm").format(cal.time)
+
+                val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(requireContext(), AlarmReceiver::class.java)
+                val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pendingIntent)
             }
             val timepickerDialog = TimePickerDialog(
                 this.requireContext(),
@@ -61,4 +71,5 @@ class AlarmFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }
