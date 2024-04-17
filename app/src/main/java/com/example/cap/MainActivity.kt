@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun showGameDialog() {
         val gameDialogs = listOf(
-            LinkGameDialog(this)
-//            DontTouchGameDialog(this)
+            LinkGameDialog(this),
+            DontTouchGameDialog(this)
         )
         val selectedGameDialog = gameDialogs.random()
         selectedGameDialog.show()

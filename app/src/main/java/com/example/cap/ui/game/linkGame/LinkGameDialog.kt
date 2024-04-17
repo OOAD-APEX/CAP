@@ -5,10 +5,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.example.cap.R
 import com.example.cap.ui.game.Game
 
@@ -31,7 +29,7 @@ class LinkGameDialog(context: Context) : Dialog(context), Game {
         linkGameView.setOnGameCompletedListener(object : LinkGameView.OnGameCompletedListener {
             override fun onGameCompleted() {
                 // 在遊戲完成時關閉 Dialog
-                dismiss()
+                endGame()
             }
         })
     }
@@ -41,6 +39,6 @@ class LinkGameDialog(context: Context) : Dialog(context), Game {
     }
 
     override fun endGame() {
-        // 實現結束遊戲的邏輯
+        dismiss()
     }
 }

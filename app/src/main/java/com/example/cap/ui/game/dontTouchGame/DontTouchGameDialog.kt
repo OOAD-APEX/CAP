@@ -21,14 +21,12 @@ class DontTouchGameDialog(context: Context) : Dialog(context), Game {
         window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         setCancelable(false)
 
-        // 在這裡初始化遊戲的 UI 元素和邏輯
     }
 
     override fun startGame() {
-        // 實現開始遊戲的邏輯
     }
 
     override fun endGame() {
-        // 實現結束遊戲的邏輯
+
     }
 }

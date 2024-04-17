@@ -9,9 +9,8 @@ interface Game {
     fun onCreate(savedInstanceState: Bundle?) {
     }
 
-    fun startGame() {
-    }
-
-    fun endGame() {
-    }
+    fun startGame()
+    fun endGame()
+//    fun addObserver(observer: GameStateObserver)
+//    fun removeObserver(observer: GameStateObserver)
 }

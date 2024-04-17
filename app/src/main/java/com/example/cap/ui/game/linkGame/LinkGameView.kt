@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -25,6 +26,7 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
         color = Color.BLACK
         textSize = 80f
         textAlign = Paint.Align.CENTER
+        isFakeBoldText = true
     }
 
     private val paintLine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -34,12 +36,28 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
+        startPoints.clear()
+        endPoints.clear()
         // 繪製左側字母
         for (i in 0 until 3) {
             val x = width * 0.2f
             val y = height * (0.2f + i * 0.3f)
-            canvas.drawText(leftLetters[i].toString(), x, y, paintText)
+
+            // 繪製字母背景
+            val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.parseColor("#FFCCCCCC")
+                style = Paint.Style.FILL
+            }
+            canvas.drawCircle(x, y, 80f, backgroundPaint)
+
+            // 計算字母的繪製位置
+            val textBounds = Rect()
+            paintText.getTextBounds(leftLetters[i].toString(), 0, 1, textBounds)
+            val textX = x
+            val textY = y - textBounds.exactCenterY()
+
+            // 繪製字母
+            canvas.drawText(leftLetters[i].toString(), textX, textY, paintText)
             startPoints.add(PointF(x, y))
         }
 
@@ -47,14 +65,36 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
         for (i in 0 until 3) {
             val x = width * 0.8f
             val y = height * (0.2f + i * 0.3f)
-            canvas.drawText(rightLetters[i].toString(), x, y, paintText)
+
+            val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.parseColor("#FFCCCCCC")
+                style = Paint.Style.FILL
+            }
+            canvas.drawCircle(x, y, 80f, backgroundPaint)
+            val textBounds = Rect()
+            paintText.getTextBounds(rightLetters[i].toString(), 0, 1, textBounds)
+            val textX = x
+            val textY = y - textBounds.exactCenterY()
+
+            canvas.drawText(rightLetters[i].toString(), textX, textY, paintText)
             endPoints.add(PointF(x, y))
         }
 
         // 繪製連線
         for ((startIndex, endIndex) in connections) {
-            canvas.drawLine(startPoints[startIndex].x, startPoints[startIndex].y,
-                endPoints[endIndex].x, endPoints[endIndex].y, paintLine)
+            val startX = startPoints[startIndex].x
+            val startY = startPoints[startIndex].y
+            val endX = endPoints[endIndex].x
+            val endY = endPoints[endIndex].y
+
+            // 計算連線的起點和終點座標
+            val startLineX = startX + 80f
+            val startLineY = startY
+            val endLineX = endX - 80f
+            val endLineY = endY
+
+            // 繪製連線
+            canvas.drawLine(startLineX, startLineY, endLineX, endLineY, paintLine)
         }
     }
 
@@ -92,21 +132,31 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
                 if (selectedStartIndex != -1 && selectedEndIndex != -1 &&
                     selectedStartIndex < leftLetters.size && selectedEndIndex < rightLetters.size) {
                     if (leftLetters[selectedStartIndex].lowercaseChar() == rightLetters[selectedEndIndex]) {
-                        connections.add(Pair(selectedStartIndex, selectedEndIndex))
-                        selectedStartIndex = -1
-                        selectedEndIndex = -1
-                        invalidate()
-
-                        // 檢查是否完成所有連線
-                        if (connections.size == 3) {
-                            gameState = GameState.COMPLETED
-                            // 觸發遊戲完成的回調或處理
-                            onGameCompletedListener?.onGameCompleted()
-                        }
+                        performClick()
                     }
                 }
             }
         }
+        return true
+    }
+
+    override fun performClick(): Boolean {
+        super.performClick()
+
+        if (selectedStartIndex != -1 && selectedEndIndex != -1 &&
+            selectedStartIndex < leftLetters.size && selectedEndIndex < rightLetters.size) {
+            connections.add(Pair(selectedStartIndex, selectedEndIndex))
+            selectedStartIndex = -1
+            selectedEndIndex = -1
+            invalidate()
+
+            // 檢查是否完成所有連線
+            if (connections.size == 3) {
+                gameState = GameState.COMPLETED
+                onGameCompletedListener?.onGameCompleted()
+            }
+        }
+
         return true
     }
 
