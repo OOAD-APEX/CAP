@@ -1,4 +1,4 @@
-package com.example.cap.ui.game.linkGame
+package com.example.cap.game.linkGame
 
 import android.content.Context
 import android.graphics.Canvas
@@ -9,18 +9,22 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.example.cap.ui.game.GameState
+import com.example.cap.game.Game
 
 class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val letters = ('A'..'Z').toList()
     private val startPoints = mutableListOf<PointF>()
     private val endPoints = mutableListOf<PointF>()
     private val connections = mutableListOf<Pair<Int, Int>>()
-    private var gameState = GameState.READY
     private var leftLetters = mutableListOf<Char>()
     private var rightLetters = mutableListOf<Char>()
     private var selectedStartIndex = -1
     private var selectedEndIndex = -1
+    private lateinit var game: Game
+
+    fun setGame(game: Game) {
+        this.game = game
+    }
 
     private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.BLACK
@@ -152,8 +156,7 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
             // 檢查是否完成所有連線
             if (connections.size == 3) {
-                gameState = GameState.COMPLETED
-                onGameCompletedListener?.onGameCompleted()
+                game.endGame()
             }
         }
 
@@ -161,7 +164,6 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
     }
 
     fun startGame() {
-        gameState = GameState.READY
         leftLetters.clear()
         rightLetters.clear()
         connections.clear()
@@ -175,19 +177,5 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
         invalidate()
     }
-
-    interface OnGameCompletedListener {
-        fun onGameCompleted()
-    }
-
-    // 在 LinkGameView 中新增一個變數來儲存監聽器
-    private var onGameCompletedListener: OnGameCompletedListener? = null
-
-    // 提供一個方法來設置監聽器
-    fun setOnGameCompletedListener(listener: OnGameCompletedListener) {
-        onGameCompletedListener = listener
-    }
-
-
 }
 

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <com.example.cap.ui.game.linkGame.LinkGameView
+    <com.example.cap.game.linkGame.LinkGameView
         android:id="@+id/linkGameView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

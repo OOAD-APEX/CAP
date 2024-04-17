@@ -1,4 +1,4 @@
-package com.example.cap.ui.game
+package com.example.cap.game
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +11,5 @@ interface Game {
 
     fun startGame()
     fun endGame()
-//    fun addObserver(observer: GameStateObserver)
-//    fun removeObserver(observer: GameStateObserver)
+
 }
