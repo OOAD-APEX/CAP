@@ -21,5 +21,5 @@
             android:id="@+id/navigation_notifications"
             android:name="com.example.cap.ui.calendar.CalendarFragment"
             android:label="@string/title_notifications"
-            tools:layout="@layout/ca"/>
+            tools:layout="@layout/calendar_fragment"/>
 </navigation>

@@ -26,7 +26,7 @@ class CalendarFragment : Fragment(R.layout.calendar_fragment) {
     private val calendarView: CalendarView get() = binding.calendarView
     private val viewModel: CalendarViewModel by viewModels<CalendarViewModel>()
 
-    private val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.MONDAY)
+    private val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.SUNDAY)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
