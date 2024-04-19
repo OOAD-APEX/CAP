@@ -2,7 +2,7 @@
     <string name="app_name">CAP</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_calendar">Calendar</string>
     <string name="start_game">開始遊戲</string>
     <string name="link_game_hint">將大寫連上小寫!!!</string>
     <string name="lucky_color">今日幸運色：</string>
