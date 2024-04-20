@@ -123,7 +123,15 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
                             break
                         }
                     }
-                } else {
+                }
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val x = event.x
+                val y = event.y
+                val radius = 80f
+
+                // 如果選擇了起點，則檢查是否可以選擇終點
+                if (selectedStartIndex != -1) {
                     for (i in endPoints.indices) {
                         if (isPointInCircle(x, y, endPoints[i], radius)) {
                             selectedEndIndex = i
@@ -131,7 +139,8 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
                         }
                     }
                 }
-
+            }
+            MotionEvent.ACTION_UP -> {
                 // 如果選擇了起點和終點,則建立連線
                 if (selectedStartIndex != -1 && selectedEndIndex != -1 &&
                     selectedStartIndex < leftLetters.size && selectedEndIndex < rightLetters.size) {
@@ -139,6 +148,8 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
                         performClick()
                     }
                 }
+                selectedStartIndex = -1
+                selectedEndIndex = -1
             }
         }
         return true
