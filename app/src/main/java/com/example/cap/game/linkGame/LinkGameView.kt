@@ -20,6 +20,12 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
     private var rightLetters = mutableListOf<Char>()
     private var selectedStartIndex = -1
     private var selectedEndIndex = -1
+    private var startX = 0f
+    private var startY = 0f
+    private var endX = 0f
+    private var endY = 0f
+    private var isDrawingLine = false
+    private val linkCount = 3 //設定連線數量
     private lateinit var game: Game
 
     fun setGame(game: Game) {
@@ -38,67 +44,68 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
         strokeWidth = 5f
     }
 
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+    private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#FFCCCCCC")
+        style = Paint.Style.FILL
+    }
+
+    private fun generatePoints(count: Int) {
+
         startPoints.clear()
         endPoints.clear()
+        for (i in 0 until count) {
+            val leftX = width * 0.2f
+            val rightX = width * 0.8f
+            val y = height * (0.2f + i * (0.6f / (count - 1)))
+            startPoints.add(PointF(leftX, y))
+            endPoints.add(PointF(rightX, y))
+        }
+
+    }
+    private fun drawLetter(canvas: Canvas, startPoints: List<PointF>, endPoints: List<PointF>) {
         // 繪製左側字母
-        for (i in 0 until 3) {
-            val x = width * 0.2f
-            val y = height * (0.2f + i * 0.3f)
-
-            // 繪製字母背景
-            val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor("#FFCCCCCC")
-                style = Paint.Style.FILL
-            }
-            canvas.drawCircle(x, y, 80f, backgroundPaint)
-
-            // 計算字母的繪製位置
+        for (i in startPoints.indices) {
             val textBounds = Rect()
-            paintText.getTextBounds(leftLetters[i].toString(), 0, 1, textBounds)
-            val textX = x
-            val textY = y - textBounds.exactCenterY()
-
-            // 繪製字母
-            canvas.drawText(leftLetters[i].toString(), textX, textY, paintText)
-            startPoints.add(PointF(x, y))
+            val letter = leftLetters[i]
+            paintText.getTextBounds(letter.toString(), 0, 1, textBounds) //取得文字長度
+            val x = startPoints[i].x
+            val y = startPoints[i].y - textBounds.exactCenterY()   //y軸扣掉與英文字母基線的差值
+            canvas.drawText(letter.toString(), x, y, paintText)
         }
 
         // 繪製右側字母
-        for (i in 0 until 3) {
-            val x = width * 0.8f
-            val y = height * (0.2f + i * 0.3f)
-
-            val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor("#FFCCCCCC")
-                style = Paint.Style.FILL
-            }
-            canvas.drawCircle(x, y, 80f, backgroundPaint)
+        for (i in endPoints.indices) {
             val textBounds = Rect()
-            paintText.getTextBounds(rightLetters[i].toString(), 0, 1, textBounds)
-            val textX = x
-            val textY = y - textBounds.exactCenterY()
-
-            canvas.drawText(rightLetters[i].toString(), textX, textY, paintText)
-            endPoints.add(PointF(x, y))
+            val letter = rightLetters[i]
+            paintText.getTextBounds(letter.toString(), 0, 1, textBounds)
+            val x = endPoints[i].x
+            val y = endPoints[i].y - textBounds.exactCenterY()
+            canvas.drawText(letter.toString(), x, y, paintText)
         }
+    }
 
+    private fun drawLetterBackground(canvas: Canvas, startPoints: List<PointF>, endPoints: List<PointF>) {
+        for(i in startPoints.indices){
+            canvas.drawCircle(startPoints[i].x, startPoints[i].y, 80f, backgroundPaint)
+        }
+        for(i in endPoints.indices){
+            canvas.drawCircle(endPoints[i].x, endPoints[i].y, 80f, backgroundPaint)
+        }
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        generatePoints(linkCount)
         // 繪製連線
         for ((startIndex, endIndex) in connections) {
-            val startX = startPoints[startIndex].x
-            val startY = startPoints[startIndex].y
-            val endX = endPoints[endIndex].x
-            val endY = endPoints[endIndex].y
-
-            // 計算連線的起點和終點座標
-            val startLineX = startX + 80f
-            val startLineY = startY
-            val endLineX = endX - 80f
-            val endLineY = endY
-
             // 繪製連線
-            canvas.drawLine(startLineX, startLineY, endLineX, endLineY, paintLine)
+            canvas.drawLine(startPoints[startIndex].x, startPoints[startIndex].y,
+                endPoints[endIndex].x, endPoints[endIndex].y, paintLine)
+        }
+        drawLetterBackground(canvas, startPoints, endPoints)
+        drawLetter(canvas, startPoints, endPoints)
+        if (isDrawingLine) {
+            canvas.drawLine(startX, startY, endX, endY, paintLine)
         }
     }
 
@@ -116,21 +123,37 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
                 val radius = 80f
 
                 // 檢查點擊的是左側還是右側字母
-                if (x < width / 2) {
-                    for (i in startPoints.indices) {
-                        if (isPointInCircle(x, y, startPoints[i], radius)) {
-                            selectedStartIndex = i
+                for (i in startPoints.indices) {
+                    if (isPointInCircle(x, y, startPoints[i], radius)) {
+                        selectedStartIndex = i
+                        startX = startPoints[i].x
+                        startY = startPoints[i].y
+                        isDrawingLine = true
+                        break
+                    }
+                }
+                if (selectedStartIndex == -1) {
+                    for (i in endPoints.indices) {
+                        if (isPointInCircle(x, y, endPoints[i], radius)) {
+                            selectedEndIndex = i
+                            startX = endPoints[i].x
+                            startY = endPoints[i].y
+                            isDrawingLine = true
                             break
                         }
                     }
                 }
             }
             MotionEvent.ACTION_MOVE -> {
+                endX = event.x
+                endY = event.y
+                invalidate()
+            }
+            MotionEvent.ACTION_UP -> {
                 val x = event.x
                 val y = event.y
                 val radius = 80f
 
-                // 如果選擇了起點，則檢查是否可以選擇終點
                 if (selectedStartIndex != -1) {
                     for (i in endPoints.indices) {
                         if (isPointInCircle(x, y, endPoints[i], radius)) {
@@ -138,10 +161,15 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
                             break
                         }
                     }
+                } else if (selectedEndIndex != -1) {
+                    for (i in startPoints.indices) {
+                        if (isPointInCircle(x, y, startPoints[i], radius)) {
+                            selectedStartIndex = i
+                            break
+                        }
+                    }
                 }
-            }
-            MotionEvent.ACTION_UP -> {
-                // 如果選擇了起點和終點,則建立連線
+
                 if (selectedStartIndex != -1 && selectedEndIndex != -1 &&
                     selectedStartIndex < leftLetters.size && selectedEndIndex < rightLetters.size) {
                     if (leftLetters[selectedStartIndex].lowercaseChar() == rightLetters[selectedEndIndex]) {
@@ -150,6 +178,8 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
                 }
                 selectedStartIndex = -1
                 selectedEndIndex = -1
+                isDrawingLine = false
+                invalidate()
             }
         }
         return true
@@ -182,7 +212,7 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
         endPoints.clear()
 
         // 隨機生成左右兩側的字母
-        val randomLetters = letters.shuffled().take(3)
+        val randomLetters = letters.shuffled().take(linkCount)
         leftLetters.addAll(randomLetters)
         rightLetters.addAll(randomLetters.map { it.lowercaseChar() }.shuffled())
 
