@@ -25,7 +25,7 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
     private var endX = 0f
     private var endY = 0f
     private var isDrawingLine = false
-    private val linkCount = 3 //設定連線數量
+    private val linkCount = 3 //設定連線數量 2~10
     private lateinit var game: Game
 
     fun setGame(game: Game) {
@@ -115,6 +115,35 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
         return dx * dx + dy * dy <= radius * radius
     }
 
+    private fun findSelectedIndex(x: Float, y: Float, radius: Float, points: List<PointF>): Int {
+        for (i in points.indices) {
+            if (isPointInCircle(x, y, points[i], radius)) {
+                return i
+            }
+        }
+        return -1
+    }
+
+    private fun isValidConnection(startIndex: Int, endIndex: Int): Boolean {
+        return startIndex != -1 && endIndex != -1 &&
+                startIndex < leftLetters.size && endIndex < rightLetters.size
+    }
+
+    private fun isMatchingLetters(startIndex: Int, endIndex: Int): Boolean {
+        return leftLetters[startIndex].lowercaseChar() == rightLetters[endIndex]
+    }
+
+    private fun resetSelection() {
+        selectedStartIndex = -1
+        selectedEndIndex = -1
+        isDrawingLine = false
+    }
+
+    private fun isAlreadyConnected(index: Int, isStartPoint: Boolean): Boolean {
+        val points = if (isStartPoint) startPoints else endPoints
+        return connections.any { it.first == index || it.second == index }
+    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -122,25 +151,17 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
                 val y = event.y
                 val radius = 80f
 
-                // 檢查點擊的是左側還是右側字母
-                for (i in startPoints.indices) {
-                    if (isPointInCircle(x, y, startPoints[i], radius)) {
-                        selectedStartIndex = i
-                        startX = startPoints[i].x
-                        startY = startPoints[i].y
+                selectedStartIndex = findSelectedIndex(x, y, radius, startPoints)
+                if (selectedStartIndex != -1 && !isAlreadyConnected(selectedStartIndex, true)) {
+                    startX = startPoints[selectedStartIndex].x
+                    startY = startPoints[selectedStartIndex].y
+                    isDrawingLine = true
+                } else {
+                    selectedEndIndex = findSelectedIndex(x, y, radius, endPoints)
+                    if (selectedEndIndex != -1 && !isAlreadyConnected(selectedStartIndex, false)) {
+                        startX = endPoints[selectedEndIndex].x
+                        startY = endPoints[selectedEndIndex].y
                         isDrawingLine = true
-                        break
-                    }
-                }
-                if (selectedStartIndex == -1) {
-                    for (i in endPoints.indices) {
-                        if (isPointInCircle(x, y, endPoints[i], radius)) {
-                            selectedEndIndex = i
-                            startX = endPoints[i].x
-                            startY = endPoints[i].y
-                            isDrawingLine = true
-                            break
-                        }
                     }
                 }
             }
@@ -155,30 +176,18 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
                 val radius = 80f
 
                 if (selectedStartIndex != -1) {
-                    for (i in endPoints.indices) {
-                        if (isPointInCircle(x, y, endPoints[i], radius)) {
-                            selectedEndIndex = i
-                            break
-                        }
-                    }
+                    selectedEndIndex = findSelectedIndex(x, y, radius, endPoints)
                 } else if (selectedEndIndex != -1) {
-                    for (i in startPoints.indices) {
-                        if (isPointInCircle(x, y, startPoints[i], radius)) {
-                            selectedStartIndex = i
-                            break
-                        }
-                    }
+                    selectedStartIndex = findSelectedIndex(x, y, radius, startPoints)
                 }
 
-                if (selectedStartIndex != -1 && selectedEndIndex != -1 &&
-                    selectedStartIndex < leftLetters.size && selectedEndIndex < rightLetters.size) {
-                    if (leftLetters[selectedStartIndex].lowercaseChar() == rightLetters[selectedEndIndex]) {
+                if (isValidConnection(selectedStartIndex, selectedEndIndex)) {
+                    if (isMatchingLetters(selectedStartIndex, selectedEndIndex)) {
                         performClick()
                     }
                 }
-                selectedStartIndex = -1
-                selectedEndIndex = -1
-                isDrawingLine = false
+
+                resetSelection()
                 invalidate()
             }
         }
@@ -188,15 +197,12 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
     override fun performClick(): Boolean {
         super.performClick()
 
-        if (selectedStartIndex != -1 && selectedEndIndex != -1 &&
-            selectedStartIndex < leftLetters.size && selectedEndIndex < rightLetters.size) {
+        if (isValidConnection(selectedStartIndex, selectedEndIndex)) {
             connections.add(Pair(selectedStartIndex, selectedEndIndex))
-            selectedStartIndex = -1
-            selectedEndIndex = -1
+            resetSelection()
             invalidate()
 
-            // 檢查是否完成所有連線
-            if (connections.size == 3) {
+            if (connections.size == linkCount) {
                 game.endGame()
             }
         }
@@ -208,8 +214,6 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
         leftLetters.clear()
         rightLetters.clear()
         connections.clear()
-        startPoints.clear()
-        endPoints.clear()
 
         // 隨機生成左右兩側的字母
         val randomLetters = letters.shuffled().take(linkCount)
