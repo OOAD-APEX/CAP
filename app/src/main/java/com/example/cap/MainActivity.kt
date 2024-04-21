@@ -13,7 +13,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.widget.Button
 import com.example.cap.ui.alarm.AlarmReceiver
 import com.example.cap.game.dontTouchGame.DontTouchGameDialog
 import com.example.cap.game.linkGame.LinkGameDialog
