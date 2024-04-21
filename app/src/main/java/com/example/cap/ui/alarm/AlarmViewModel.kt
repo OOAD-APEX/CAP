@@ -11,4 +11,5 @@ class AlarmViewModel : ViewModel() {
     }
 
     val text: LiveData<String> = _text
+
 }
