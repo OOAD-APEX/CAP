@@ -1,14 +1,15 @@
-package com.example.cap.ui.dashboard
+package com.example.cap.ui.alarm
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
+class AlarmViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+        value = "8 : 00 AM"
     }
+
     val text: LiveData<String> = _text
 
 }

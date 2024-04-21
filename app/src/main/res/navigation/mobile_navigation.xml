@@ -12,8 +12,8 @@
             tools:layout="@layout/fragment_home"/>
 
     <fragment
-            android:id="@+id/navigation_dashboard"
-            android:name="com.example.cap.ui.dashboard.DashboardFragment"
+            android:id="@+id/navigation_alarm"
+            android:name="com.example.cap.ui.alarm.AlarmFragment"
             android:label="@string/title_dashboard"
             tools:layout="@layout/fragment_dashboard"/>
 
