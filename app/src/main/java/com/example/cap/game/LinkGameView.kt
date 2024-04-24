@@ -141,7 +141,7 @@ class LinkGameView(context: Context) : View(context) {
         val points = if (isStartPoint) startPoints else endPoints
         return connections.any { it.first == index || it.second == index }
     }
-00000
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
