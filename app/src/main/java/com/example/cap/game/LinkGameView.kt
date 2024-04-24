@@ -138,8 +138,13 @@ class LinkGameView(context: Context) : View(context) {
     }
 
     private fun isAlreadyConnected(index: Int, isStartPoint: Boolean): Boolean {
-        val points = if (isStartPoint) startPoints else endPoints
-        return connections.any { it.first == index || it.second == index }
+        return if (isStartPoint) {
+            // 檢查選擇的起點是否已經有連線，或者選擇的起點的相對終點是否已經有連線
+            connections.any { it.first == index }
+        } else {
+            // 檢查選擇的終點是否已經有連線，或者選擇的終點的相對起點是否已經有連線
+            connections.any { it.second == index }
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -156,7 +161,7 @@ class LinkGameView(context: Context) : View(context) {
                     isDrawingLine = true
                 } else {
                     selectedEndIndex = findSelectedIndex(x, y, radius, endPoints)
-                    if (selectedEndIndex != -1 && !isAlreadyConnected(selectedStartIndex, false)) {
+                    if (selectedEndIndex != -1 && !isAlreadyConnected(selectedEndIndex, false)) {
                         startX = endPoints[selectedEndIndex].x
                         startY = endPoints[selectedEndIndex].y
                         isDrawingLine = true
@@ -196,15 +201,16 @@ class LinkGameView(context: Context) : View(context) {
         super.performClick()
 
         if (isValidConnection(selectedStartIndex, selectedEndIndex)) {
-            connections.add(Pair(selectedStartIndex, selectedEndIndex))
-            resetSelection()
-            invalidate()
+            if (!isAlreadyConnected(selectedStartIndex, true) && !isAlreadyConnected(selectedEndIndex, false)) {
+                connections.add(Pair(selectedStartIndex, selectedEndIndex))
+                resetSelection()
+                invalidate()
 
-            if (connections.size == linkCount) {
-                game.endGame()
+                if (connections.size == linkCount) {
+                    game.endGame()
+                }
             }
         }
-
         return true
     }
 
@@ -221,4 +227,3 @@ class LinkGameView(context: Context) : View(context) {
         invalidate()
     }
 }
-

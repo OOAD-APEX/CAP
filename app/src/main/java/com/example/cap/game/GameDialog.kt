@@ -28,8 +28,8 @@ class GameDialog(context: Context) : Dialog(context), Game {
 
     override fun startGame() {
         selectedGameView = selectRandomGameView()
-//
-//        // 將選擇的遊戲 View 加入到 Dialog 的內容視圖中
+
+        // 將選擇的遊戲 View 加入到 Dialog 的內容視圖中
         val container = findViewById<ViewGroup>(R.id.gameContainer)
         container.addView(selectedGameView)
 
@@ -70,5 +70,4 @@ class GameDialog(context: Context) : Dialog(context), Game {
         //不可上一頁
         setCancelable(false)
     }
-
 }
