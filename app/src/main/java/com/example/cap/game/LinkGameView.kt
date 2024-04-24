@@ -1,4 +1,4 @@
-package com.example.cap.game.linkGame
+package com.example.cap.game
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,12 +6,10 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.Rect
-import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.example.cap.game.Game
 
-class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class LinkGameView(context: Context) : View(context) {
     private val letters = ('A'..'Z').toList()
     private val startPoints = mutableListOf<PointF>()
     private val endPoints = mutableListOf<PointF>()
@@ -143,7 +141,7 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
         val points = if (isStartPoint) startPoints else endPoints
         return connections.any { it.first == index || it.second == index }
     }
-
+00000
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
