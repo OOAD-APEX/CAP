@@ -102,11 +102,11 @@ class LinkGameView(context: Context, attrs: AttributeSet) : View(context, attrs)
             canvas.drawLine(startPoints[startIndex].x, startPoints[startIndex].y,
                 endPoints[endIndex].x, endPoints[endIndex].y, paintLine)
         }
-        drawLetterBackground(canvas, startPoints, endPoints)
-        drawLetter(canvas, startPoints, endPoints)
         if (isDrawingLine) {
             canvas.drawLine(startX, startY, endX, endY, paintLine)
         }
+        drawLetterBackground(canvas, startPoints, endPoints)
+        drawLetter(canvas, startPoints, endPoints)
     }
 
     private fun isPointInCircle(x: Float, y: Float, center: PointF, radius: Float): Boolean {
