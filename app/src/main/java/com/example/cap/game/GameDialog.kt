@@ -14,6 +14,7 @@ import kotlin.random.Random
 
 class GameDialog(context: Context) : Dialog(context), Game {
     private lateinit var selectedGameView: View
+    private val observers = mutableListOf<GameDialogObserver>()
     private val gameViewList: List<View> = listOf( //增加遊戲
         LinkGameView(context),
         TryNotToTouchGameView(context)
@@ -48,6 +49,15 @@ class GameDialog(context: Context) : Dialog(context), Game {
 
     override fun endGame() {
         dismiss()
+        notifyGameComplete()
+    }
+
+    fun addObserver(observer: GameDialogObserver) {
+        observers.add(observer)
+    }
+
+    private fun notifyGameComplete() {
+        observers.forEach { it.onGameComplete() }
     }
 
     private fun selectRandomGameView(): View {
