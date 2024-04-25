@@ -20,10 +20,11 @@ class LinkGameView(context: Context) : View(context) {
     private var selectedEndIndex = -1
     private var startX = 0f
     private var startY = 0f
-    private var endX = 0f
-    private var endY = 0f
+    private var currentX = 0f
+    private var currentY = 0f
     private var isDrawingLine = false
     private val linkCount = 3 //設定連線數量 2~10
+    private val radius = 80f  //字母背景半徑&觸碰半徑
     private lateinit var game: Game
 
     fun setGame(game: Game) {
@@ -47,14 +48,14 @@ class LinkGameView(context: Context) : View(context) {
         style = Paint.Style.FILL
     }
 
-    private fun generatePoints(count: Int) {
+    private fun generatePoints() {
 
         startPoints.clear()
         endPoints.clear()
-        for (i in 0 until count) {
+        for (i in 0 until linkCount) {
             val leftX = width * 0.2f
             val rightX = width * 0.8f
-            val y = height * (0.2f + i * (0.6f / (count - 1)))
+            val y = height * (0.2f + i * (0.6f / (linkCount - 1)))
             startPoints.add(PointF(leftX, y))
             endPoints.add(PointF(rightX, y))
         }
@@ -84,16 +85,16 @@ class LinkGameView(context: Context) : View(context) {
 
     private fun drawLetterBackground(canvas: Canvas, startPoints: List<PointF>, endPoints: List<PointF>) {
         for(i in startPoints.indices){
-            canvas.drawCircle(startPoints[i].x, startPoints[i].y, 80f, backgroundPaint)
+            canvas.drawCircle(startPoints[i].x, startPoints[i].y, radius, backgroundPaint)
         }
         for(i in endPoints.indices){
-            canvas.drawCircle(endPoints[i].x, endPoints[i].y, 80f, backgroundPaint)
+            canvas.drawCircle(endPoints[i].x, endPoints[i].y, radius, backgroundPaint)
         }
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        generatePoints(linkCount)
+        generatePoints()
         // 繪製連線
         for ((startIndex, endIndex) in connections) {
             // 繪製連線
@@ -101,21 +102,21 @@ class LinkGameView(context: Context) : View(context) {
                 endPoints[endIndex].x, endPoints[endIndex].y, paintLine)
         }
         if (isDrawingLine) {
-            canvas.drawLine(startX, startY, endX, endY, paintLine)
+            canvas.drawLine(startX, startY, currentX, currentY, paintLine)
         }
         drawLetterBackground(canvas, startPoints, endPoints)
         drawLetter(canvas, startPoints, endPoints)
     }
 
-    private fun isPointInCircle(x: Float, y: Float, center: PointF, radius: Float): Boolean {
+    private fun isPointInCircle(x: Float, y: Float, center: PointF): Boolean {
         val dx = x - center.x
         val dy = y - center.y
         return dx * dx + dy * dy <= radius * radius
     }
 
-    private fun findSelectedIndex(x: Float, y: Float, radius: Float, points: List<PointF>): Int {
+    private fun findSelectedIndex(x: Float, y: Float, points: List<PointF>): Int {
         for (i in points.indices) {
-            if (isPointInCircle(x, y, points[i], radius)) {
+            if (isPointInCircle(x, y, points[i])) {
                 return i
             }
         }
@@ -139,12 +140,15 @@ class LinkGameView(context: Context) : View(context) {
 
     private fun isAlreadyConnected(index: Int, isStartPoint: Boolean): Boolean {
         return if (isStartPoint) {
-            // 檢查選擇的起點是否已經有連線，或者選擇的起點的相對終點是否已經有連線
             connections.any { it.first == index }
         } else {
-            // 檢查選擇的終點是否已經有連線，或者選擇的終點的相對起點是否已經有連線
             connections.any { it.second == index }
         }
+    }
+
+    private fun settingTraceStartPoint(index: Int, point: List<PointF>){
+        startX = point[index].x
+        startY = point[index].y
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -152,36 +156,32 @@ class LinkGameView(context: Context) : View(context) {
             MotionEvent.ACTION_DOWN -> {
                 val x = event.x
                 val y = event.y
-                val radius = 80f
 
-                selectedStartIndex = findSelectedIndex(x, y, radius, startPoints)
+                selectedStartIndex = findSelectedIndex(x, y, startPoints)
                 if (selectedStartIndex != -1 && !isAlreadyConnected(selectedStartIndex, true)) {
-                    startX = startPoints[selectedStartIndex].x
-                    startY = startPoints[selectedStartIndex].y
+                    settingTraceStartPoint(selectedStartIndex, startPoints)
                     isDrawingLine = true
                 } else {
-                    selectedEndIndex = findSelectedIndex(x, y, radius, endPoints)
+                    selectedEndIndex = findSelectedIndex(x, y, endPoints)
                     if (selectedEndIndex != -1 && !isAlreadyConnected(selectedEndIndex, false)) {
-                        startX = endPoints[selectedEndIndex].x
-                        startY = endPoints[selectedEndIndex].y
+                        settingTraceStartPoint(selectedEndIndex, endPoints)
                         isDrawingLine = true
                     }
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                endX = event.x
-                endY = event.y
+                currentX = event.x
+                currentY = event.y
                 invalidate()
             }
             MotionEvent.ACTION_UP -> {
                 val x = event.x
                 val y = event.y
-                val radius = 80f
-
+                //如果是起點開始
                 if (selectedStartIndex != -1) {
-                    selectedEndIndex = findSelectedIndex(x, y, radius, endPoints)
+                    selectedEndIndex = findSelectedIndex(x, y, endPoints)
                 } else if (selectedEndIndex != -1) {
-                    selectedStartIndex = findSelectedIndex(x, y, radius, startPoints)
+                    selectedStartIndex = findSelectedIndex(x, y, startPoints)
                 }
 
                 if (isValidConnection(selectedStartIndex, selectedEndIndex)) {
@@ -200,15 +200,15 @@ class LinkGameView(context: Context) : View(context) {
     override fun performClick(): Boolean {
         super.performClick()
 
-        if (isValidConnection(selectedStartIndex, selectedEndIndex)) {
-            if (!isAlreadyConnected(selectedStartIndex, true) && !isAlreadyConnected(selectedEndIndex, false)) {
-                connections.add(Pair(selectedStartIndex, selectedEndIndex))
-                resetSelection()
-                invalidate()
-
-                if (connections.size == linkCount) {
-                    game.endGame()
-                }
+        if (!isValidConnection(selectedStartIndex, selectedEndIndex)) {
+        return true
+        }
+        if (!isAlreadyConnected(selectedStartIndex, true) && !isAlreadyConnected(selectedEndIndex, false)) {
+            connections.add(Pair(selectedStartIndex, selectedEndIndex))
+            resetSelection()
+            invalidate()
+            if (connections.size == linkCount) {
+                game.endGame()
             }
         }
         return true
