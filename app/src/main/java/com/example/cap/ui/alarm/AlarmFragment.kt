@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.cap.MainActivity
 import com.example.cap.R
 import com.example.cap.databinding.FragmentDashboardBinding
 import java.text.SimpleDateFormat
@@ -47,6 +48,7 @@ class AlarmFragment : Fragment() {
             val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
                 cal.set(Calendar.HOUR_OF_DAY, hour)
                 cal.set(Calendar.MINUTE, minute)
+                cal.set(Calendar.SECOND, 0)
                 tvTime.text = SimpleDateFormat("HH:mm").format(cal.time)
 
                 val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -64,6 +66,10 @@ class AlarmFragment : Fragment() {
             )
             timepickerDialog.show()
         }
+        val button_cancel_alarm = root.findViewById<Button>(R.id.button_cancel_alarm)
+        button_cancel_alarm.setOnClickListener {
+            cancelAlarm()
+        }
         return root
     }
 
@@ -71,5 +77,12 @@ class AlarmFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+    fun cancelAlarm() {
+        val intent = Intent(context, AlarmReceiver::class.java)
+        intent.action = "STOP_ALARM"
+        context?.sendBroadcast(intent)
+    }
+
+
 
 }
