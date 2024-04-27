@@ -58,3 +58,7 @@ private fun stopRingtoneAndNotification(context: Context) {
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     notificationManager.cancel(1)
 }
+
+// Glossary
+// cancel alarm(play game) -> start game
+// actually turn off -> cancel alarm
