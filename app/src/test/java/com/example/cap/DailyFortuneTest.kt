@@ -9,12 +9,16 @@ class DailyFortuneTest {
     fun testGetRandomFortuneColor() {
         val dailyFortuneViewModel = DailyFortuneViewModel()
         val fortuneColors = listOf("紅", "橘", "黃", "綠", "藍", "紫", "粉", "黑", "白")
-        assertTrue(fortuneColors.contains(dailyFortuneViewModel.getRandomFortuneColor()))
+        repeat(50) {
+            assertTrue(fortuneColors.contains(dailyFortuneViewModel.getRandomFortuneColor()))
+        }
     }
     @Test
     fun testGetRandomDailyFortune() {
         val dailyFortuneViewModel = DailyFortuneViewModel()
         val dailyFortunes = listOf("大吉", "中吉", "小吉", "普通")
-        assertTrue(dailyFortunes.contains(dailyFortuneViewModel.getRandomDailyFortune()))
+        repeat(50) {
+            assertTrue(dailyFortunes.contains(dailyFortuneViewModel.getRandomDailyFortune()))
+        }
     }
 }
