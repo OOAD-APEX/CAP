@@ -14,8 +14,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.example.cap.ui.alarm.AlarmReceiver
-import com.example.cap.game.dontTouchGame.DontTouchGameDialog
-import com.example.cap.game.linkGame.LinkGameDialog
+import com.example.cap.game.GameDialog
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,12 +36,6 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-
-        val startGameBotton: Button = findViewById(R.id.startGameButton)
-        startGameBotton.setOnClickListener {
-            showGameDialog()
-        }
-
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
@@ -52,14 +45,5 @@ class MainActivity : AppCompatActivity() {
         val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         alarmManager.cancel(pendingIntent)
-    }
-
-    private fun showGameDialog() {
-        val gameDialogs = listOf(
-            LinkGameDialog(this),
-            DontTouchGameDialog(this)
-        )
-        val selectedGameDialog = gameDialogs.random()
-        selectedGameDialog.show()
     }
 }

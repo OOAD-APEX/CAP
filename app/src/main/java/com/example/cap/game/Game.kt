@@ -6,9 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 
 interface Game {
-    fun onCreate(savedInstanceState: Bundle?) {
-    }
-
     fun startGame()
     fun endGame()
 
