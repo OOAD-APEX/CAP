@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.cap.R
+import com.example.cap.domain.Alarm
 import com.example.cap.game.GameDialog
 import com.example.cap.game.GameDialogObserver
 import com.example.cap.ui.fortune.DailyFortuneDialog
@@ -21,7 +22,7 @@ class AlarmActivity : AppCompatActivity(), GameDialogObserver {
             showGameDialog()
         }
     }
-
+    private val alarm = Alarm()
     private fun showGameDialog() {
         val gameDialog = GameDialog(this)
         gameDialog.addObserver(this)
@@ -29,13 +30,7 @@ class AlarmActivity : AppCompatActivity(), GameDialogObserver {
     }
 
     override fun onGameComplete() {
-        AlarmFragment().cancelAlarm(this)
-        val dialog = DailyFortuneDialog(this)
-        dialog.show()
-        // close the activity
-        dialog.setOnDismissListener {
-            finish()
-        }
+        alarm.onGameComplete(this)
     }
-
 }
+
