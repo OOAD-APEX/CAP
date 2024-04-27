@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -34,7 +34,6 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
 }
 
 dependencies {
@@ -53,4 +52,13 @@ dependencies {
 
     // The view calendar library
     implementation ("com.kizitonwose.calendar:view:2.5.0")
+
+    // Anroid Room
+    val room_version = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
+    // To use Kotlin Symbol Processing (KSP)
+    ksp("androidx.room:room-compiler:$room_version")
 }

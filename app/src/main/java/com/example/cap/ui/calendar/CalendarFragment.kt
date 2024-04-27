@@ -6,27 +6,35 @@ import android.widget.TextView
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.cap.MyApplication
 import com.example.cap.R
 import com.example.cap.databinding.CalendarDayLayoutBinding
 import com.example.cap.databinding.CalendarFragmentBinding
 import com.example.cap.databinding.CalendarHeaderBinding
+import com.example.cap.domain.Event
+import com.example.cap.domain.TriggerMode
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
+import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
 
 class CalendarFragment : Fragment(R.layout.calendar_fragment) {
 
     private lateinit var binding: CalendarFragmentBinding
     private val calendarView: CalendarView get() = binding.calendarView
-    private val viewModel: CalendarViewModel by viewModels<CalendarViewModel>()
+    private val viewModel: CalendarViewModel by viewModels<CalendarViewModel>{
+        CalendarViewModelFactory(( activity?.application as MyApplication ).database.eventDao())
+    }
 
-    private val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.MONDAY)
+    private val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.SUNDAY)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,18 +43,35 @@ class CalendarFragment : Fragment(R.layout.calendar_fragment) {
         binding = CalendarFragmentBinding.bind(view)
 
         setupCalendar()
+
+        // observe the title of the calendar
+        viewModel.title.observe(viewLifecycleOwner) {
+            // TODO: make it look nicer
+            binding.textView.text = it
+        }
     }
 
     private fun setupCalendar() {
         setupCalendarDayBinder()
         setupCalendarMonthBinder()
+        setupMonthChangeListener()
+        // TODO: setup dateOnclickListener
 
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusMonths(100)  // Adjust as needed
         val endMonth = currentMonth.plusMonths(100)  // Adjust as needed
         calendarView.setup(startMonth, endMonth, daysOfWeek.first())
         calendarView.scrollToMonth(currentMonth)
+    }
 
+    private fun setupMonthChangeListener() {
+        binding.calendarView.monthScrollListener = {
+            viewModel.setMonthTitle(it.yearMonth)
+        }
+    }
+
+    private fun setupDateOnClickListener() {
+        TODO("Not yet implemented")
     }
 
     private fun setupCalendarDayBinder() {
@@ -60,7 +85,15 @@ class CalendarFragment : Fragment(R.layout.calendar_fragment) {
 
             // Called every time we need to reuse a container.
             override fun bind(container: DayViewContainer, data: CalendarDay) {
-                container.textView.text = data.date.dayOfMonth.toString()
+                when (data.position == DayPosition.MonthDate) {
+                    true -> {
+                        container.textView.text = data.date.dayOfMonth.toString()
+                    }
+                    false -> {
+                        container.textView.text = null
+                    }
+                }
+                // TODO: add selected date's background color
             }
         }
     }

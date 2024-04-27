@@ -7,6 +7,15 @@
         android:layout_height="match_parent"
         tools:context=".ui.calendar.CalendarFragment" android:orientation="vertical">
 
+    <TextView
+            android:text="TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:id="@+id/textView"
+            android:padding="10dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
     <com.kizitonwose.calendar.view.CalendarView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
