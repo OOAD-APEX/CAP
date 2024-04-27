@@ -16,8 +16,8 @@ class GameDialog(context: Context) : Dialog(context), Game {
     private lateinit var selectedGameView: View
     private val observers = mutableListOf<GameDialogObserver>()
     private val gameViewList: List<View> = listOf( //增加遊戲
-        LinkGameView(context),
-        TryNotToTouchGameView(context)
+        LinkGameView(context)/*,
+        TryNotToTouchGameView(context)*/
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

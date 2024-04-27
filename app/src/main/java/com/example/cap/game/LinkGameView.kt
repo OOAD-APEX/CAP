@@ -184,31 +184,19 @@ class LinkGameView(context: Context) : View(context) {
                     selectedStartIndex = findSelectedIndex(x, y, startPoints)
                 }
 
-                if (isValidConnection(selectedStartIndex, selectedEndIndex)) {
-                    if (isMatchingLetters(selectedStartIndex, selectedEndIndex)) {
-                        performClick()
+                if (isValidConnection(selectedStartIndex, selectedEndIndex) &&
+                    isMatchingLetters(selectedStartIndex, selectedEndIndex)) {
+                    if (!isAlreadyConnected(selectedStartIndex, true) && !isAlreadyConnected(selectedEndIndex, false)) {
+                        connections.add(Pair(selectedStartIndex, selectedEndIndex))
+                        resetSelection()
+                        invalidate()
+                        if (connections.size == linkCount) {
+                            game.endGame()
+                        }
                     }
                 }
-
                 resetSelection()
                 invalidate()
-            }
-        }
-        return true
-    }
-
-    override fun performClick(): Boolean {
-        super.performClick()
-
-        if (!isValidConnection(selectedStartIndex, selectedEndIndex)) {
-        return true
-        }
-        if (!isAlreadyConnected(selectedStartIndex, true) && !isAlreadyConnected(selectedEndIndex, false)) {
-            connections.add(Pair(selectedStartIndex, selectedEndIndex))
-            resetSelection()
-            invalidate()
-            if (connections.size == linkCount) {
-                game.endGame()
             }
         }
         return true
