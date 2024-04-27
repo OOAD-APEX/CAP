@@ -1,9 +1,8 @@
-package com.example.cap.domain.data
+package com.example.cap.domain
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.cap.domain.TriggerMode
 import java.time.LocalDateTime
 
 @Entity(tableName = "events")
@@ -15,7 +14,7 @@ data class Event(
     @ColumnInfo(name = "trigger_mode")
     val triggerMode: TriggerMode,
     @ColumnInfo(name = "title")
-    val title: Int,
+    val title: String,
     @ColumnInfo(name = "description")
-    val description: Int
+    val description: String
 )

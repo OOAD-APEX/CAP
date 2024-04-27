@@ -6,10 +6,13 @@ import android.widget.TextView
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.cap.MyApplication
 import com.example.cap.R
 import com.example.cap.databinding.CalendarDayLayoutBinding
 import com.example.cap.databinding.CalendarFragmentBinding
 import com.example.cap.databinding.CalendarHeaderBinding
+import com.example.cap.domain.Event
+import com.example.cap.domain.TriggerMode
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
@@ -27,7 +30,9 @@ class CalendarFragment : Fragment(R.layout.calendar_fragment) {
 
     private lateinit var binding: CalendarFragmentBinding
     private val calendarView: CalendarView get() = binding.calendarView
-    private val viewModel: CalendarViewModel by viewModels<CalendarViewModel>()
+    private val viewModel: CalendarViewModel by viewModels<CalendarViewModel>{
+        CalendarViewModelFactory(( activity?.application as MyApplication ).database.eventDao())
+    }
 
     private val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.SUNDAY)
 
