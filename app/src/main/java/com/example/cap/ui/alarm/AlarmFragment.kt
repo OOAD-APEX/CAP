@@ -68,7 +68,7 @@ class AlarmFragment : Fragment() {
         }
         val button_cancel_alarm = root.findViewById<Button>(R.id.button_cancel_alarm)
         button_cancel_alarm.setOnClickListener {
-            cancelAlarm()
+            cancelAlarm(requireContext())
         }
         return root
     }
@@ -77,12 +77,10 @@ class AlarmFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    fun cancelAlarm() {
+
+    fun cancelAlarm(context: Context) {
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.action = "STOP_ALARM"
-        context?.sendBroadcast(intent)
+        context.sendBroadcast(intent)
     }
-
-
-
 }
