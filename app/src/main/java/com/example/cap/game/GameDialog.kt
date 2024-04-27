@@ -37,13 +37,14 @@ class GameDialog(context: Context) : Dialog(context), Game {
         // 設置遊戲並啟動
         when (selectedGameView) {
             is LinkGameView -> {
-                (selectedGameView as LinkGameView).setGame(this)
-                (selectedGameView as LinkGameView).startGame()
+                val viewModel = (selectedGameView as LinkGameView).viewModel
+                viewModel.setGame(this)
+//                viewModel.startGame()
             }
-            is TryNotToTouchGameView -> {
-                (selectedGameView as TryNotToTouchGameView).setGame(this)
-                (selectedGameView as TryNotToTouchGameView).startGame()
-            }
+//            is TryNotToTouchGameView -> {
+//                (selectedGameView as TryNotToTouchGameView).setGame(this)
+//                (selectedGameView as TryNotToTouchGameView).startGame()
+//            }
         }
     }
 
