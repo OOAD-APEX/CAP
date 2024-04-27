@@ -1,5 +1,4 @@
 package com.example.cap.ui.alarm
-import android.media.MediaPlayer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
