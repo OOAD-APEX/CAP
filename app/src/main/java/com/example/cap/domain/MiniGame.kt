@@ -24,7 +24,11 @@ open class MiniGame {
     protected var isDrawingLine = false
     protected val linkCount = 3 //設定連線數量 2~10
     protected val radius = 80f  //字母背景半徑&觸碰半徑
-    lateinit var game: Game
+    private var game: Game? = null
+
+    fun setGame(game: Game) {
+        this.game = game
+    }
 
     fun generateLetters(){
         leftLetters.clear()
@@ -177,7 +181,8 @@ open class MiniGame {
                         resetSelection()
                         invalidateView()
                         if (connections.size == linkCount) {
-                            game.endGame()
+                            // if game is not null, end the game, if it is null, throw an exception
+                            game?.endGame() ?: throw IllegalStateException("Game is not set")
                         }
                     }
                 }
