@@ -7,10 +7,12 @@ import com.example.cap.domain.MiniGame
 
 class LinkGameViewModel {
     private val model = MiniGame()
-    private var gameReference: Game? = null
+    var isGameStarted = false
+
     fun startGame(width: Int, height: Int) {
         model.generateLetters()
         model.generatePoints(width, height)
+        isGameStarted = true
     }
 
     fun drawGame(canvas: Canvas, paintText: Paint, paintLine: Paint, backgroundPaint: Paint) {

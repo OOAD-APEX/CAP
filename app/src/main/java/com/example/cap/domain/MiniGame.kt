@@ -202,6 +202,4 @@ class MiniGame {
         }
         return true
     }
-
-
 }

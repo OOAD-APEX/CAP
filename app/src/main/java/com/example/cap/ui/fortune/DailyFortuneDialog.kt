@@ -9,16 +9,18 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.TextView
 import com.example.cap.R
+import com.example.cap.game.LinkGameViewModel
 
 
 class DailyFortuneDialog(context: Context) : Dialog(context){
+    private val viewModel = DailyFortuneViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.daily_fortune_dialog)
         val fortuneColorTextView = findViewById<TextView>(R.id.fortune_color)
         val dailyFortuneTextView = findViewById<TextView>(R.id.daily_fortune)
-        fortuneColorTextView.append(DailyFortuneViewModel().getRandomFortuneColor())
-        dailyFortuneTextView.append(DailyFortuneViewModel().getRandomDailyFortune())
+        fortuneColorTextView.append(viewModel.getRandomFortuneColor())
+        dailyFortuneTextView.append(viewModel.getRandomDailyFortune())
         settingDialog()
     }
 

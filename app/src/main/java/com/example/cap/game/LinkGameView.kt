@@ -27,13 +27,11 @@ class LinkGameView(context: Context) : View(context) {
         style = Paint.Style.FILL
     }
 
-//    init {
-//        viewModel.startGame(width, height)
-//    }
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        viewModel.startGame(w, h)
+        if(!viewModel.isGameStarted) {
+            viewModel.startGame(w, h)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {

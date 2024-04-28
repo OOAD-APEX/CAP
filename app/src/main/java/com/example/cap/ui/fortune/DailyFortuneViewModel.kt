@@ -1,18 +1,15 @@
 package com.example.cap.ui.fortune
 
 import androidx.lifecycle.ViewModel
+import com.example.cap.domain.DailyFortune
 
-class DailyFortuneViewModel : ViewModel(){
+class DailyFortuneViewModel() : ViewModel(){
+    private val model = DailyFortune()
     fun getRandomFortuneColor(): String {
-        val fortuneColors = listOf("紅", "橘", "黃", "綠", "藍", "紫", "粉", "黑", "白")
-        return fortuneColors.random()
+        return model.getRandomFortuneColor()
     }
 
     fun getRandomDailyFortune(): String {
-        val dailyFortunes = listOf("大吉",
-            "中吉",
-            "小吉",
-            "普通")
-        return dailyFortunes.random()
+        return model.getRandomDailyFortune()
     }
 }
