@@ -30,7 +30,7 @@ class LinkGameViewModel {
 
 
     fun setGame(game: Game) {
-        model.game = game
+        model.setGame(game)
     }
 
 
