@@ -23,8 +23,11 @@ class LinkGameViewModel {
     }
 
     fun handleTouchEvent(event: MotionEvent, invalidateView: () -> Unit) {
-        model.handleTouchEvent(event) {
-            invalidateView()
+        // catch Game is not set exception
+        try {
+            model.handleTouchEvent(event, invalidateView)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
