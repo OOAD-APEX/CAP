@@ -8,24 +8,23 @@ import android.graphics.Rect
 import android.view.MotionEvent
 import com.example.cap.game.Game
 
-class MiniGame {
+open class MiniGame {
     private val letters = ('A'..'Z').toList()
-    private val startPoints = mutableListOf<PointF>()
-    private val endPoints = mutableListOf<PointF>()
-    private val connections = mutableListOf<Pair<Int, Int>>()
-    private var leftLetters = mutableListOf<Char>()
-    private var rightLetters = mutableListOf<Char>()
-    private var selectedStartIndex = -1
-    private var selectedEndIndex = -1
+    protected var startPoints = mutableListOf<PointF>()
+    protected var endPoints = mutableListOf<PointF>()
+    protected var connections = mutableListOf<Pair<Int, Int>>()
+    protected var leftLetters = mutableListOf<Char>()
+    protected var rightLetters = mutableListOf<Char>()
+    protected var selectedStartIndex = -1
+    protected var selectedEndIndex = -1
     private var startX = 0f
     private var startY = 0f
     private var currentX = 0f
     private var currentY = 0f
-    private var isDrawingLine = false
-    private val linkCount = 3 //設定連線數量 2~10
-    private val radius = 80f  //字母背景半徑&觸碰半徑
+    protected var isDrawingLine = false
+    protected val linkCount = 3 //設定連線數量 2~10
+    protected val radius = 80f  //字母背景半徑&觸碰半徑
     lateinit var game: Game
-
 
     fun generateLetters(){
         leftLetters.clear()
@@ -38,7 +37,6 @@ class MiniGame {
     }
 
     fun generatePoints(width: Int, height: Int) {
-
         startPoints.clear()
         endPoints.clear()
         for (i in 0 until linkCount) {
@@ -48,8 +46,8 @@ class MiniGame {
             startPoints.add(PointF(leftX, y))
             endPoints.add(PointF(rightX, y))
         }
-
     }
+
     fun drawLetter(canvas: Canvas, paintText: Paint) {
         // 繪製左側字母
         for (i in startPoints.indices) {
@@ -95,13 +93,13 @@ class MiniGame {
         }
     }
 
-    private fun isPointInCircle(x: Float, y: Float, center: PointF): Boolean {
+    protected fun isPointInCircle(x: Float, y: Float, center: PointF): Boolean {
         val dx = x - center.x
         val dy = y - center.y
         return dx * dx + dy * dy <= radius * radius
     }
 
-    private fun findSelectedIndex(x: Float, y: Float, points: List<PointF>): Int {
+    protected fun findSelectedIndex(x: Float, y: Float, points: List<PointF>): Int {
         for (i in points.indices) {
             if (isPointInCircle(x, y, points[i])) {
                 return i
@@ -110,22 +108,25 @@ class MiniGame {
         return -1
     }
 
-    private fun isValidConnection(startIndex: Int, endIndex: Int): Boolean {
+    protected fun isValidConnection(startIndex: Int, endIndex: Int): Boolean {
         return startIndex != -1 && endIndex != -1 &&
                 startIndex < leftLetters.size && endIndex < rightLetters.size
     }
 
-    private fun isMatchingLetters(startIndex: Int, endIndex: Int): Boolean {
+    protected fun isMatchingLetters(startIndex: Int, endIndex: Int): Boolean {
         return leftLetters[startIndex].lowercaseChar() == rightLetters[endIndex]
     }
 
-    private fun resetSelection() {
+    protected fun resetSelection() {
         selectedStartIndex = -1
         selectedEndIndex = -1
         isDrawingLine = false
     }
 
-    private fun isAlreadyConnected(index: Int, isStartPoint: Boolean): Boolean {
+    protected fun isAlreadyConnected(index: Int, isStartPoint: Boolean): Boolean {
+        if (index == -1) {
+            throw IllegalArgumentException("index cant be -1")
+        }
         return if (isStartPoint) {
             connections.any { it.first == index }
         } else {
