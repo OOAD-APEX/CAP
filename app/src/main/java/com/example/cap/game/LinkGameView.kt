@@ -39,9 +39,7 @@ class LinkGameView(context: Context) : View(context) {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        viewModel.handleTouchEvent(event) {
-            invalidate()
-        }
+        viewModel.handleTouchEvent(event, ::invalidate)
         return true
     }
 }
