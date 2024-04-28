@@ -95,20 +95,6 @@ class MiniGame {
         }
     }
 
-//    fun onDraw(canvas: Canvas) {
-//        // 繪製連線
-//        for ((startIndex, endIndex) in connections) {
-//            // 繪製連線
-//            canvas.drawLine(startPoints[startIndex].x, startPoints[startIndex].y,
-//                endPoints[endIndex].x, endPoints[endIndex].y, paintLine)
-//        }
-//        if (isDrawingLine) {
-//            canvas.drawLine(startX, startY, currentX, currentY, paintLine)
-//        }
-//        drawLetterBackground(canvas, startPoints, endPoints)
-//        drawLetter(canvas, startPoints, endPoints)
-//    }
-
     private fun isPointInCircle(x: Float, y: Float, center: PointF): Boolean {
         val dx = x - center.x
         val dy = y - center.y
