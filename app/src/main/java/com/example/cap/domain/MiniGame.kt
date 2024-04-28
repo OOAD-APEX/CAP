@@ -37,8 +37,6 @@ open class MiniGame {
     }
 
     fun generatePoints(width: Int, height: Int) {
-        startPoints.clear()
-        endPoints.clear()
         for (i in 0 until linkCount) {
             val leftX = width * 0.2f
             val rightX = width * 0.8f
@@ -71,11 +69,11 @@ open class MiniGame {
     }
 
     fun drawLetterBackground(canvas: Canvas, backgroundPaint: Paint) {
-        for(i in startPoints.indices){
-            canvas.drawCircle(startPoints[i].x, startPoints[i].y, radius, backgroundPaint)
+        for(point in startPoints){
+            canvas.drawCircle(point.x, point.y, radius, backgroundPaint)
         }
-        for(i in endPoints.indices){
-            canvas.drawCircle(endPoints[i].x, endPoints[i].y, radius, backgroundPaint)
+        for(point in endPoints){
+            canvas.drawCircle(point.x, point.y, radius, backgroundPaint)
         }
     }
 

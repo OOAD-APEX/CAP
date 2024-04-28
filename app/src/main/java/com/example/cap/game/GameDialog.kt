@@ -1,5 +1,6 @@
 package com.example.cap.game
 
+import android.app.Application
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
@@ -39,7 +40,11 @@ class GameDialog(context: Context) : Dialog(context), Game {
             is LinkGameView -> {
                 val viewModel = (selectedGameView as LinkGameView).viewModel
                 viewModel.setGame(this)
-//                viewModel.startGame()
+                selectedGameView.post {
+                    val width = selectedGameView.width
+                    val height = selectedGameView.height
+                    viewModel.startGame(width, height)
+                }
             }
 //            is TryNotToTouchGameView -> {
 //                (selectedGameView as TryNotToTouchGameView).setGame(this)

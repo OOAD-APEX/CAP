@@ -29,9 +29,8 @@ class LinkGameView(context: Context) : View(context) {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        if(!viewModel.isGameStarted) {
-            viewModel.startGame(w, h)
-        }
+        // commented out because this method is move to GameDialog.kt
+        // viewModel.startGame(w, h)
     }
 
     override fun onDraw(canvas: Canvas) {
