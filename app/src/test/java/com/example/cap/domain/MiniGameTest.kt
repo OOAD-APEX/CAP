@@ -1,18 +1,36 @@
 package com.example.cap.domain
 
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.PointF
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Ignore
-import kotlin.math.min
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.*
+import org.mockito.kotlin.times
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
+// BREAKING CHANGE!:
+// android.graphic cant test with normal .jar, The real implementation is on the device.
+// So we need Robolectric framework to mock the android class
+// quote from https://stackoverflow.com/a/3175440
 class MiniGameTest : MiniGame() {
+    @Mock
+    private lateinit var mockCanvas: Canvas
+
+    @Mock
+    private lateinit var mockPaint: Paint
+
     @Before
     fun setUp() {
+        mockCanvas = mock(Canvas::class.java)
+        mockPaint = mock(Paint::class.java)
     }
 
     @After
@@ -36,9 +54,6 @@ class MiniGameTest : MiniGame() {
     }
 
     @Test
-    @Ignore("The PointF is not testable")
-    // android.jar. That JAR file is mostly stubs. The real implementation is on the device.
-    // quote from https://stackoverflow.com/a/3175440
     fun testGeneratePoints() {
         val width = 100
         val height = 100
@@ -68,7 +83,6 @@ class MiniGameTest : MiniGame() {
     }
 
     @Test
-    @Ignore
     fun testIsPointInCircle() {
         val x = 5f
         val y = 5f
@@ -78,7 +92,7 @@ class MiniGameTest : MiniGame() {
     }
 
     @Test
-    fun isValidConnection() {
+    fun testIsValidConnection() {
         super.generateLetters()
         assertTrue(isValidConnection(0, 0))
         assertTrue(isValidConnection(1, 1))
@@ -142,6 +156,34 @@ class MiniGameTest : MiniGame() {
         assertThrows(IllegalArgumentException::class.java) {
             isAlreadyConnected(-1, false)
         }
-
     }
+
+    @Test
+    fun testDrawLetterBackground() {
+        super.generatePoints(100, 100)
+        drawLetterBackground(mockCanvas, mockPaint)
+
+        val invokeTimes = startPoints.size + endPoints.size
+
+        verify(mockCanvas, times(invokeTimes)).drawCircle(any(Float::class.java), any(Float::class.java), eq(radius), eq(mockPaint))
+    }
+
+    @Test
+    fun testDrawLetter() {
+        // Arrange
+        val mockCanvas = mock(Canvas::class.java)
+        val mockPaint = mock(Paint::class.java)
+        super.generateLetters()
+        super.generatePoints(100, 100)
+
+        // Assume
+        val expectedInvokeTimes = startPoints.size + endPoints.size
+
+        // Act
+        drawLetter(mockCanvas, mockPaint)
+
+        // Assert
+        verify(mockCanvas, times(expectedInvokeTimes)).drawText(any(String::class.java), any(Float::class.java), any(Float::class.java), eq(mockPaint))
+    }
+
 }
