@@ -65,6 +65,4 @@ dependencies {
     testImplementation ("org.mockito:mockito-core:3.12.4")
     testImplementation ("org.mockito.kotlin:mockito-kotlin:3.2.0")
     testImplementation ("org.robolectric:robolectric:4.12")
-    testImplementation ("org.powermock:powermock-api-mockito2:2.0.9")
-    testImplementation ("org.powermock:powermock-module-junit4:2.0.9")
 }
