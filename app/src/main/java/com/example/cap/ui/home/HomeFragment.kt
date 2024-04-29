@@ -37,12 +37,12 @@ class HomeFragment : Fragment() , GameDialogObserver{
         homeViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-        val startGameButton: Button = binding.startGameButton
-        startGameButton.setOnClickListener {
-            val gameDialog = GameDialog(requireContext())
-            gameDialog.addObserver(this)
-            gameDialog.show()
-        }
+//        val startGameButton: Button = binding.startGameButton
+//        startGameButton.setOnClickListener {
+//            val gameDialog = GameDialog(requireContext())
+//            gameDialog.addObserver(this)
+//            gameDialog.show()
+//        }
         return root
     }
 
