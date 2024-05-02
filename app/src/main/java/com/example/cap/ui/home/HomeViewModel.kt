@@ -10,7 +10,7 @@ import com.example.cap.game.GameDialogObserver
 class HomeViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+        value = "CAP"
     }
     val text: LiveData<String> = _text
 
