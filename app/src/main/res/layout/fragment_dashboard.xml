@@ -9,11 +9,11 @@
 
 
     <TextView
+            android:id="@+id/tvTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/selectedTime"
             android:layout_marginTop="200dp"
-            android:text="08 : 45 PM"
+            android:text="Time :"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="46dp"/>
@@ -27,22 +27,6 @@
             android:text="Set Alarm"
             android:textSize="26dp"/>
 
-    <Button
-            android:id="@+id/button_cancel_alarm"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginHorizontal="26dp"
-            android:text="turn off alarm"
-            android:textSize="26dp"/>
 
-    <TextView
-            android:id="@+id/tvTime"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginHorizontal="26dp"
-            android:text="time"
-            android:textSize="26dp"/>
 
 </LinearLayout>

@@ -19,7 +19,12 @@ class Alarm {
     fun setAlarm(context: Context, cal: Calendar) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
+        intent.putExtra("alarmTime", cal.timeInMillis)
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        // if alarmtime<currenttime, set alarm for next day
+        if (cal.timeInMillis < System.currentTimeMillis()) {
+            cal.add(Calendar.DAY_OF_MONTH, 1)
+        }
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pendingIntent)
     }

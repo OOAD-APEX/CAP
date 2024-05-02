@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.app.NotificationManager
 import android.app.NotificationChannel
+import android.app.PendingIntent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.cap.R
@@ -25,9 +26,11 @@ class AlarmReceiver : BroadcastReceiver() {
     private val alarm = Alarm()
 
     override fun onReceive(context: Context, intent: Intent) {
+
         if (intent.action == "STOP_ALARM") {
             alarm.stopRingtoneAndNotification(context)
-        } else {
+        }
+        else {
             alarm.startRingtoneAndNotification(context)
         }
     }
