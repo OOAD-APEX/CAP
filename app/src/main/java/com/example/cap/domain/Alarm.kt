@@ -35,6 +35,10 @@ class Alarm {
         context.sendBroadcast(intent)
     }
 
+    fun updateAlarm(context: Context, cal: Calendar) {
+        cancelAlarm(context)
+        setAlarm(context, cal)
+    }
 
     fun startRingtoneAndNotification(context: Context) {
         val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)

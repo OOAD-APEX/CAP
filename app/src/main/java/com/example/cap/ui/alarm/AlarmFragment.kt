@@ -39,6 +39,7 @@ class AlarmFragment : Fragment() {
         val root: View = binding.root
 
         val setAlarmbtn = root.findViewById<Button>(R.id.setAlarmBtn)
+        val modifyalarmbtn = root.findViewById<Button>(R.id.mAlarmBtn)
         val tvTime = root.findViewById<TextView>(R.id.tvTime)
 
         setAlarmbtn.setOnClickListener {
@@ -50,6 +51,26 @@ class AlarmFragment : Fragment() {
                 tvTime.text = SimpleDateFormat("HH:mm").format(cal.time)
 
                 alarm.setAlarm(requireContext(), cal)
+            }
+            val timepickerDialog = TimePickerDialog(
+                this.requireContext(),
+                timeSetListener,
+                cal.get(Calendar.HOUR_OF_DAY),
+                cal.get(Calendar.MINUTE),
+                true
+            )
+            timepickerDialog.show()
+        }
+
+        modifyalarmbtn.setOnClickListener{
+            val cal = Calendar.getInstance()
+            val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
+                cal.set(Calendar.HOUR_OF_DAY, hour)
+                cal.set(Calendar.MINUTE, minute)
+                cal.set(Calendar.SECOND, 0)
+                tvTime.text = SimpleDateFormat("HH:mm").format(cal.time)
+
+                alarm.updateAlarm(requireContext(), cal)
             }
             val timepickerDialog = TimePickerDialog(
                 this.requireContext(),

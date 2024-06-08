@@ -27,6 +27,15 @@
             android:text="Set Alarm"
             android:textSize="26dp"/>
 
+    <Button
+            android:id="@+id/mAlarmBtn"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="26dp"
+            android:text="Modify Alarm"
+            android:textSize="26dp"/>
+
 
 
 </LinearLayout>
