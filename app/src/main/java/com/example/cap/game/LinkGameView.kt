@@ -27,12 +27,6 @@ class LinkGameView(context: Context) : View(context) {
         style = Paint.Style.FILL
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        // commented out because this method is move to GameDialog.kt
-        // viewModel.startGame(w, h)
-    }
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         viewModel.drawGame(canvas, paintText, paintLine, backgroundPaint)
@@ -42,4 +36,6 @@ class LinkGameView(context: Context) : View(context) {
         viewModel.handleTouchEvent(event, ::invalidate)
         return true
     }
+
+
 }

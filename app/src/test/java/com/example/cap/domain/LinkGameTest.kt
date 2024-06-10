@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Test
 
 import org.junit.Assert.*
-import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -20,7 +19,7 @@ import org.robolectric.RobolectricTestRunner
 // android.graphic cant test with normal .jar, The real implementation is on the device.
 // So we need Robolectric framework to mock the android class
 // quote from https://stackoverflow.com/a/3175440
-class MiniGameTest : MiniGame() {
+class LinkGameTest : LinkGame() {
     @Mock
     private lateinit var mockCanvas: Canvas
 

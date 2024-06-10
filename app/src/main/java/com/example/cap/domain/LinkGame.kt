@@ -1,14 +1,13 @@
 package com.example.cap.domain
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.Rect
 import android.view.MotionEvent
 import com.example.cap.game.Game
 
-open class MiniGame {
+open class LinkGame {
     private val letters = ('A'..'Z').toList()
     protected var startPoints = mutableListOf<PointF>()
     protected var endPoints = mutableListOf<PointF>()

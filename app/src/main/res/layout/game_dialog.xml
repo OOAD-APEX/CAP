@@ -20,11 +20,11 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/linkGameHintTextView"
+        android:id="@+id/gameHintTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
-        android:text="@string/link_game_hint"
+        android:text="@string/app_name"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
