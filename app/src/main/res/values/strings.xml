@@ -8,4 +8,5 @@
     <string name="try_not_to_touch_game_hint">小心抵達最右側!!!</string>
     <string name="lucky_color">今日幸運色：</string>
     <string name="daily_fortune">今日運勢：</string>
+    <string name="close">✕</string>
 </resources>
