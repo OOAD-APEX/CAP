@@ -1,15 +1,29 @@
 package com.example.cap.ui.calendar
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
+import com.example.cap.MainApplication
 import com.example.cap.database.dao.EventDAO
+import com.example.cap.domain.Event
+import com.example.cap.domain.TriggerMode
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.time.YearMonth
 
-class CalendarViewModel(private val dao: EventDAO) : ViewModel() {
+class CalendarViewModel() : ViewModel() {
+    val eventDao = MainApplication.database.eventDao()
+
+
     fun setMonthTitle(yearMonth: YearMonth) {
         title.value = "${yearMonth.year}\n${yearMonth.month.name}"
+        viewModelScope.launch {
+            eventDao.insert(Event(0, LocalDateTime.now(), TriggerMode.ALARM, "asd"))
+        }
+    }
+
+    fun addEvent(event: Event) {
+        viewModelScope.launch {
+            eventDao.insert(event)
+        }
     }
 
     // create a MutableLiveData to store the title of the calendar
@@ -17,13 +31,4 @@ class CalendarViewModel(private val dao: EventDAO) : ViewModel() {
     var title = MutableLiveData<String>("Not set")
         private set
 
-}
-
-class CalendarViewModelFactory(private val dao: EventDAO) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CalendarViewModel::class.java) ) {
-            return CalendarViewModel(dao) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
 }
