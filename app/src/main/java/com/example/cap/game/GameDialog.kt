@@ -18,7 +18,7 @@ class GameDialog(context: Context) : Dialog(context), Game {
     private lateinit var selectedGameView: View
     private val observers = mutableListOf<GameDialogObserver>()
     private val gameViewList: List<View> = listOf( //增加遊戲
-//        LinkGameView(context),
+        LinkGameView(context),
         TryNotToTouchGameView(context)
     )
 
@@ -50,9 +50,14 @@ class GameDialog(context: Context) : Dialog(context), Game {
                 }
             }
             is TryNotToTouchGameView -> {
-                (selectedGameView as TryNotToTouchGameView).setGame(this)
-                gameHintTextView.setText(R.string.try_not_to_touch_game_hint)
-//                (selectedGameView as TryNotToTouchGameView).startGame()
+                val viewModel = (selectedGameView as TryNotToTouchGameView).viewModel
+                viewModel.setGame(this)
+                selectedGameView.post {
+                    val width = selectedGameView.width
+                    val height = selectedGameView.height
+                    viewModel.startGame(width, height)
+                    gameHintTextView.setText(R.string.try_not_to_touch_game_hint)
+                }
             }
         }
     }
