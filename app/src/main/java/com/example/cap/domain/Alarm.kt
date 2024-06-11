@@ -37,6 +37,13 @@ class Alarm {
         context.sendBroadcast(intent)
     }
 
+    fun deleteAlarm(context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        alarmManager.cancel(pendingIntent)
+
+    }
     fun updateAlarm(context: Context, cal: Calendar) {
         cancelAlarm(context)
         setAlarm(context, cal)

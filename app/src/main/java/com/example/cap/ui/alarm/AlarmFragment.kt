@@ -108,6 +108,11 @@ class AlarmFragment : Fragment() {
                 }
                 .show()
         }
+        val deleteAlarmButton = root.findViewById<Button>(R.id.deleteAlarmBtn)
+        deleteAlarmButton.setOnClickListener {
+            alarm.deleteAlarm(requireContext())
+            tvTime.text = "00:00"
+        }
         return root
     }
 
