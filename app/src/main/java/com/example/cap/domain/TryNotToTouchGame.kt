@@ -5,17 +5,17 @@ import android.view.MotionEvent
 import kotlin.math.sqrt
 
 open class TryNotToTouchGame {
-    private var path1 = mutableListOf<Pair<Float, Float>>()
-    private var path2 = mutableListOf<Pair<Float, Float>>()
+    protected var path1 = mutableListOf<Pair<Float, Float>>()
+    protected var path2 = mutableListOf<Pair<Float, Float>>()
     private var touchX = 0f
     private var touchY = 0f
     private var collisionDetected = false
     private var game: Game? = null
-    var gameStarted = false
+    private var gameStarted = false
 
     private val radius = 80f  //觸碰半徑
-    private var startX = 0f
-    private var startY = 0f
+    protected var startX = 0f
+    protected var startY = 0f
     protected var width = 0
     protected var height = 0
     fun setGame(game: Game) {
@@ -149,7 +149,7 @@ open class TryNotToTouchGame {
         return true
     }
 
-    private fun checkCollision(x: Float, y: Float, path: List<Pair<Float, Float>>): Boolean {
+    fun checkCollision(x: Float, y: Float, path: List<Pair<Float, Float>>): Boolean {
         // Check if the touch point is close to the wire path
         for (i in 0 until path.size - 1) {
             val startX = path[i].first
@@ -165,7 +165,7 @@ open class TryNotToTouchGame {
         return false
     }
 
-    private fun distanceFromLineSegment(x1: Float, y1: Float, x2: Float, y2: Float, px: Float, py: Float): Float {
+    fun distanceFromLineSegment(x1: Float, y1: Float, x2: Float, y2: Float, px: Float, py: Float): Float {
         val l2 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)
         if (l2 == 0f) return distance(px, py, x1, y1)
         var t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / l2
@@ -173,7 +173,7 @@ open class TryNotToTouchGame {
         return distance(px, py, x1 + t * (x2 - x1), y1 + t * (y2 - y1))
     }
 
-    private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+    fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
     }
 }

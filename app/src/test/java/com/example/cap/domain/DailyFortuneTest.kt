@@ -1,4 +1,4 @@
-package com.example.cap
+package com.example.cap.domain
 
 import com.example.cap.domain.DailyFortune
 import org.junit.Assert.*
