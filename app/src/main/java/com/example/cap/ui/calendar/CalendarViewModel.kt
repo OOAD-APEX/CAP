@@ -20,7 +20,9 @@ class CalendarViewModel() : ViewModel() {
         }
     }
 
-    fun addEvent(event: Event) {
+    fun saveEvent(text: String, time: LocalDateTime, triggerMode: TriggerMode) {
+        val event = Event(0, time, triggerMode, text)
+
         viewModelScope.launch {
             eventDao.insert(event)
         }
