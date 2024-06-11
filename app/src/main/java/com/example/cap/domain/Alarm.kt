@@ -4,7 +4,9 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.cap.R
 import com.example.cap.ui.alarm.AlarmActivity
@@ -40,10 +42,16 @@ class Alarm {
         setAlarm(context, cal)
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     fun startRingtoneAndNotification(context: Context) {
-        val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val ringtoneUriString = sharedPreferences.getString("selected_ringtone_uri", null)
+        val alarmUri = if (ringtoneUriString != null) Uri.parse(ringtoneUriString) else RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         AlarmReceiver.ringtone = RingtoneManager.getRingtone(context, alarmUri)
-        AlarmReceiver.ringtone?.play()
+        AlarmReceiver.ringtone?.apply {
+            isLooping = true
+            play()
+        }
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

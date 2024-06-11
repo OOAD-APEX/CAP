@@ -1,8 +1,11 @@
 package com.example.cap.ui.alarm
 
+import android.app.AlertDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -80,6 +83,30 @@ class AlarmFragment : Fragment() {
                 true
             )
             timepickerDialog.show()
+        }
+
+        val selectRingtoneButton = root.findViewById<Button>(R.id.selectRingtoneButton)
+        selectRingtoneButton.setOnClickListener {
+            val ringtoneManager = RingtoneManager(context)
+            ringtoneManager.setType(RingtoneManager.TYPE_ALARM)
+            val cursor = ringtoneManager.cursor
+
+            val ringtones = mutableListOf<Uri>()
+            while (cursor.moveToNext()) {
+                val ringtoneUri = ringtoneManager.getRingtoneUri(cursor.position)
+                ringtones.add(ringtoneUri)
+            }
+
+            val ringtoneNames = ringtones.map { RingtoneManager.getRingtone(context, it).getTitle(context) }.toTypedArray()
+
+            AlertDialog.Builder(context)
+                .setTitle("Select a ringtone")
+                .setItems(ringtoneNames) { _, which ->
+                    val selectedRingtoneUri = ringtones[which]
+                    val sharedPreferences = context?.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                    sharedPreferences?.edit()?.putString("selected_ringtone_uri", selectedRingtoneUri.toString())?.apply()
+                }
+                .show()
         }
         return root
     }
