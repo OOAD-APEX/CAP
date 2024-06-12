@@ -32,7 +32,7 @@ class AlarmReceiver : BroadcastReceiver() {
         if (intent.action == "STOP_ALARM") {
             alarm.stopRingtoneAndNotification(context)
         }
-        else {
+        else if (intent.action == "START_ALARM"){
             alarm.startRingtoneAndNotification(context)
         }
     }

@@ -6,7 +6,9 @@ import com.example.cap.database.dao.EventDAO
 import com.example.cap.domain.Calendar
 import com.example.cap.domain.Event
 import com.example.cap.domain.TriggerMode
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -21,11 +23,13 @@ class CalendarViewModel() : ViewModel() {
         title.value = "${yearMonth.year}\n${yearMonth.month.name}"
     }
 
-    fun saveEvent(text: String, time: LocalDateTime, triggerMode: TriggerMode) {
+    fun saveEvent(text: String, time: LocalDateTime, triggerMode: TriggerMode): LiveData<Long>{
+        val id = MutableLiveData<Long>()
         viewModelScope.launch {
-           val event = Event(0, time, triggerMode, text)
-           calendar.saveEvent(event)
+            val event = Event(0, time, triggerMode, text)
+            id.value = calendar.saveEvent(event)
         }
+        return id
     }
 
     fun updateEvent(id: Int, text: String, time: LocalDateTime, triggerMode: TriggerMode) {

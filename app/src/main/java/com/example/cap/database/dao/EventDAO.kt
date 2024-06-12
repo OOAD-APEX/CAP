@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface EventDAO {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(event: Event)
+    suspend fun insert(event: Event): Long
 
     @Update
     suspend fun update(event: Event)
@@ -24,4 +24,7 @@ interface EventDAO {
 
     @Query("SELECT * from events ORDER BY time ASC")
     fun getAllItems(): Flow<List<Event>>
+
+    @Query("SELECT * from events ORDER BY time ASC")
+    fun getAllItemsForNormalList(): List<Event>
 }

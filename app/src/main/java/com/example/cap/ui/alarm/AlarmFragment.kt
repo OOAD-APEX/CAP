@@ -73,7 +73,7 @@ class AlarmFragment : Fragment() {
                 cal.set(Calendar.SECOND, 0)
                 tvTime.text = SimpleDateFormat("HH:mm").format(cal.time)
 
-                alarm.updateAlarm(requireContext(), cal)
+                alarm.replaceTheOnlyAlarm(requireContext(), cal)
             }
             val timepickerDialog = TimePickerDialog(
                 this.requireContext(),
