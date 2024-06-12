@@ -2,6 +2,7 @@ package com.example.cap.domain
 
 import android.app.AlarmManager
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import org.junit.After
@@ -64,4 +65,19 @@ class AlarmTest {
         verify(mockNotificationManager).cancel(anyInt())
     }
 
+
+    @Test
+    fun testDeleteAlarm() {
+        `when`(mockContext.getSystemService(Context.ALARM_SERVICE)).thenReturn(mockAlarmManager)
+        alarm.deleteAlarm(mockContext)
+        verify(mockAlarmManager).cancel(any(PendingIntent::class.java))
+    }
+
+    @Test
+    fun testUpdateAlarm() {
+        `when`(mockContext.getSystemService(Context.ALARM_SERVICE)).thenReturn(mockAlarmManager)
+        `when`(mockCalendar.timeInMillis).thenReturn(1000L)
+        alarm.updateAlarm(mockContext, mockCalendar)
+        verify(mockAlarmManager).setExact(eq(AlarmManager.RTC_WAKEUP), eq(1000L), any())
+    }
 }
