@@ -5,6 +5,8 @@
     <string name="title_calendar">Calendar</string>
     <string name="start_game">開始遊戲</string>
     <string name="link_game_hint">將大寫連上小寫!!!</string>
+    <string name="try_not_to_touch_game_hint">小心抵達最右側!!!</string>
     <string name="lucky_color">今日幸運色：</string>
     <string name="daily_fortune">今日運勢：</string>
+    <string name="close">✕</string>
 </resources>

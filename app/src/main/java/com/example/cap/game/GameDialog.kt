@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import android.widget.TextView
 import com.example.cap.R
 import kotlin.random.Random
 
@@ -17,8 +18,8 @@ class GameDialog(context: Context) : Dialog(context), Game {
     private lateinit var selectedGameView: View
     private val observers = mutableListOf<GameDialogObserver>()
     private val gameViewList: List<View> = listOf( //增加遊戲
-        LinkGameView(context)/*,
-        TryNotToTouchGameView(context)*/
+        LinkGameView(context),
+        TryNotToTouchGameView(context)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +35,7 @@ class GameDialog(context: Context) : Dialog(context), Game {
         // 將選擇的遊戲 View 加入到 Dialog 的內容視圖中
         val container = findViewById<ViewGroup>(R.id.gameContainer)
         container.addView(selectedGameView)
+        val gameHintTextView = findViewById<TextView>(R.id.gameHintTextView)
 
         // 設置遊戲並啟動
         when (selectedGameView) {
@@ -44,12 +46,19 @@ class GameDialog(context: Context) : Dialog(context), Game {
                     val width = selectedGameView.width
                     val height = selectedGameView.height
                     viewModel.startGame(width, height)
+                    gameHintTextView.setText(R.string.link_game_hint)
                 }
             }
-//            is TryNotToTouchGameView -> {
-//                (selectedGameView as TryNotToTouchGameView).setGame(this)
-//                (selectedGameView as TryNotToTouchGameView).startGame()
-//            }
+            is TryNotToTouchGameView -> {
+                val viewModel = (selectedGameView as TryNotToTouchGameView).viewModel
+                viewModel.setGame(this)
+                selectedGameView.post {
+                    val width = selectedGameView.width
+                    val height = selectedGameView.height
+                    viewModel.startGame(width, height)
+                    gameHintTextView.setText(R.string.try_not_to_touch_game_hint)
+                }
+            }
         }
     }
 

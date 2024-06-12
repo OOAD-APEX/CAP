@@ -3,10 +3,10 @@ package com.example.cap.game
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
-import com.example.cap.domain.MiniGame
+import com.example.cap.domain.LinkGame
 
 class LinkGameViewModel {
-    private val model = MiniGame()
+    private val model = LinkGame()
     var isGameStarted = false
 
     fun startGame(width: Int, height: Int) {

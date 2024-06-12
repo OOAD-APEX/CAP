@@ -7,9 +7,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import android.widget.Button
 import android.widget.TextView
 import com.example.cap.R
-import com.example.cap.game.LinkGameViewModel
 
 
 class DailyFortuneDialog(context: Context) : Dialog(context){
@@ -19,8 +19,14 @@ class DailyFortuneDialog(context: Context) : Dialog(context){
         setContentView(R.layout.daily_fortune_dialog)
         val fortuneColorTextView = findViewById<TextView>(R.id.fortune_color)
         val dailyFortuneTextView = findViewById<TextView>(R.id.daily_fortune)
+        val closeButton = findViewById<Button>(R.id.close_button)
         fortuneColorTextView.append(viewModel.getRandomFortuneColor())
         dailyFortuneTextView.append(viewModel.getRandomDailyFortune())
+
+        closeButton.setOnClickListener{
+            dismiss()
+        }
+
         settingDialog()
     }
 
