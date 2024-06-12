@@ -5,16 +5,23 @@ import android.app.AlertDialog
 import android.content.Context
 import android.view.*
 import android.widget.*
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cap.databinding.EventItemBinding
+import com.example.cap.domain.Alarm
 import com.example.cap.domain.Calendar
 import com.example.cap.domain.Event
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class EventAdapter (private val scope: CoroutineScope, private val context: Context, private val viewModel: CalendarViewModel) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
+class EventAdapter (private val scope: CoroutineScope,
+                    private val context: Context,
+                    private val viewModel: CalendarViewModel,
+                    private val lifecycleOwner: LifecycleOwner
+) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
     private var events = emptyList<Event>()
     private val calendar = Calendar()
+    private val alarm = Alarm()
 
 
     class EventViewHolder(binding: EventItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -36,7 +43,7 @@ class EventAdapter (private val scope: CoroutineScope, private val context: Cont
         holder.nameText.text = current.title
         holder.timeText.text = String.format("%02d:%02d", current.time.hour, current.time.minute)
         holder.editButton.setOnClickListener {
-            EventInputDialog(current, context, viewModel, InputDialogMode.UPDATE).create().show()
+            EventInputDialog(current, context, viewModel, lifecycleOwner, InputDialogMode.UPDATE).create().show()
         }
         holder.deleteButton.setOnClickListener {
             showDeleteDialog(it, current)
@@ -50,6 +57,7 @@ class EventAdapter (private val scope: CoroutineScope, private val context: Cont
             .setPositiveButton("Yes") { _, _ ->
                 scope.launch {
                     calendar.deleteEvent(current)
+                    alarm.deleteAlarm(context, current.id)
                 }
             }
             .setNegativeButton("No", null)

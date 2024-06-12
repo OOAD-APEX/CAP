@@ -12,17 +12,15 @@ import com.example.cap.R
 import com.example.cap.ui.alarm.AlarmActivity
 import com.example.cap.ui.alarm.AlarmReceiver
 import java.util.Calendar
-import com.example.cap.game.GameDialog
-import com.example.cap.game.GameDialogObserver
 import com.example.cap.ui.fortune.DailyFortuneDialog
 
 class Alarm {
-
-    fun setAlarm(context: Context, cal: Calendar) {
+    fun setAlarm(context: Context, cal: Calendar, intentId: Int) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.putExtra("alarmTime", cal.timeInMillis)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        intent.action = "START_ALARM"
+        val pendingIntent = PendingIntent.getBroadcast(context, intentId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         // if alarmtime<currenttime, set alarm for next day
         if (cal.timeInMillis < System.currentTimeMillis()) {
             cal.add(Calendar.DAY_OF_MONTH, 1)
@@ -31,21 +29,34 @@ class Alarm {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.timeInMillis, pendingIntent)
     }
 
+    fun setAlarm(context: Context, cal: Calendar) {
+        setAlarm(context, cal, 0)
+    }
+
     fun cancelAlarm(context: Context) {
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.action = "STOP_ALARM"
         context.sendBroadcast(intent)
     }
 
-    fun deleteAlarm(context: Context) {
+    fun deleteAlarm(context: Context, intentId: Int) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        intent.action = "START_ALARM"
+        val pendingIntent = PendingIntent.getBroadcast(context, intentId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         alarmManager.cancel(pendingIntent)
-
     }
-    fun updateAlarm(context: Context, cal: Calendar) {
-        cancelAlarm(context)
+
+    fun deleteAlarm(context: Context) {
+        deleteAlarm(context, 0)
+    }
+
+    fun updateAlarm(context: Context, cal: Calendar, intentId: Int) {
+        deleteAlarm(context, intentId)
+        setAlarm(context, cal)
+    }
+
+    fun replaceTheOnlyAlarm(context: Context, cal: Calendar) {
         setAlarm(context, cal)
     }
 
