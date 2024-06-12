@@ -1,37 +1,32 @@
 package com.example.cap.domain
 
-import android.app.Application
-import android.content.Context
-import java.util.Calendar
+import com.example.cap.MainApplication
+import kotlinx.coroutines.flow.Flow
+
 class Calendar {
-    fun dsf () {
-        // get the application context
-        val context = Application()
+    private val eventDao = MainApplication.database.eventDao()
+
+    suspend fun saveEvent (event: Event){
+        eventDao.insert(event)
     }
 
-    class AlarmListManager(private val context: Context) {
-        private val alarms = mutableListOf<Alarm>()
+    suspend fun deleteEvent(event: Event) {
+        eventDao.delete(event)
+    }
 
-        fun addAlarm(cal: Calendar) {
-            val alarm = Alarm()
-            alarm.setAlarm(context, cal)
-            alarms.add(alarm)
-        }
+    suspend fun deleteEventById(id: Int) {
+        eventDao.deleteById(id)
+    }
 
-        fun cancelAlarm(index: Int) {
-            val alarm = alarms[index]
-            alarm.cancelAlarm(context)
-            alarms.removeAt(index)
-        }
+    suspend fun updateEvent(event: Event) {
+        eventDao.update(event)
+    }
 
-        fun updateAlarm(index: Int, cal: Calendar) {
-            val alarm = alarms[index]
-            alarm.cancelAlarm(context)
-            alarm.setAlarm(context, cal)
-        }
+    fun getEvents(id: Int) : Flow<Event> {
+        return eventDao.getItem(id)
+    }
 
-        fun getAlarms(): List<Alarm> {
-            return alarms
-        }
+    fun getAllItems(): Flow<List<Event>> {
+        return eventDao.getAllItems()
     }
 }

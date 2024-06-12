@@ -1,12 +1,22 @@
 package com.example.cap.ui.calendar
 
+import android.app.AlertDialog
+import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
-import android.widget.TextView
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.cap.MyApplication
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cap.R
 import com.example.cap.databinding.CalendarDayLayoutBinding
 import com.example.cap.databinding.CalendarFragmentBinding
@@ -25,16 +35,93 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
+import java.util.*
 
 class CalendarFragment : Fragment(R.layout.calendar_fragment) {
 
     private lateinit var binding: CalendarFragmentBinding
     private val calendarView: CalendarView get() = binding.calendarView
-    private val viewModel: CalendarViewModel by viewModels<CalendarViewModel>{
-        CalendarViewModelFactory(( activity?.application as MyApplication ).database.eventDao())
-    }
+    private val viewModel: CalendarViewModel by viewModels()
 
     private val daysOfWeek = daysOfWeek(firstDayOfWeek = DayOfWeek.SUNDAY)
+    private val today = LocalDate.now()
+
+    private val inputDialog by lazy {
+        val nameEditText = AppCompatEditText(requireContext())
+        val timeButton = Button(requireContext()).apply {
+            text = "Select Time"
+            textSize = 18f
+        }
+        var timeSelected = false
+
+        timeButton.setOnClickListener {
+            val currentTime = Calendar.getInstance()
+            val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
+            val currentMinute = currentTime.get(Calendar.MINUTE)
+
+            val timePickerDialog = TimePickerDialog(requireContext(), { _, hourOfDay, minute ->
+                // This is called when the user clicks "OK" in the TimePickerDialog.
+                timeButton.text = String.format("%02d:%02d", hourOfDay, minute)
+                timeSelected = true
+            }, currentHour, currentMinute, true) // Initial time set to 12:00. Change as needed.
+
+            timePickerDialog.show()
+        }
+
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            val padding = 75
+            setPadding(padding, padding, padding, padding)
+            addView(nameEditText, FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            addView(timeButton, FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+        }
+        AlertDialog.Builder(requireContext())
+            .setTitle("Add Event")
+            .setView(layout)
+            .setPositiveButton("Save") { _, _ ->
+                val time = timeButton.text.toString()
+                if (!timeSelected) {
+                    val toast = Toast.makeText(requireContext(), "Select a time!!!.", Toast.LENGTH_SHORT)
+                    toast.setGravity(Gravity.BOTTOM, 0, 300)
+                    toast.show()
+                    return@setPositiveButton
+                }
+
+                val name = nameEditText.text.toString()
+                if (name.isEmpty()) {
+                    val toast = Toast.makeText(requireContext(), "Fill name!!!.", Toast.LENGTH_SHORT)
+                    toast.setGravity(Gravity.BOTTOM, 0, 300)
+                    toast.show()
+                    return@setPositiveButton
+                }
+
+                val timeParts = time.split(":").map { it.toInt() }
+                val hour = timeParts[0]
+                val minute = timeParts[1]
+                viewModel.selectedDate.value.let {
+                    val dateTime = LocalDateTime.of(it!!.year, it.month, it.dayOfMonth, hour, minute)
+                    viewModel.saveEvent(name, dateTime, TriggerMode.NOTIFICATION)
+                }
+                // tear down the dialog
+                nameEditText.setText("")
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+            .apply {
+                setOnShowListener {
+                    // Show the keyboard
+                    nameEditText.requestFocus()
+                    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                }
+                setOnDismissListener {
+                    // Hide the keyboard
+                    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+                }
+            }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,10 +131,28 @@ class CalendarFragment : Fragment(R.layout.calendar_fragment) {
 
         setupCalendar()
 
-        // observe the title of the calendar
+        binding.addEventButton.setOnClickListener {
+            inputDialog.show()
+        }
+
+        // recycle view setup
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = EventAdapter(lifecycleScope, requireContext(), viewModel)
+        viewModel.events.observe(viewLifecycleOwner) { events ->
+            (binding.recyclerView.adapter as EventAdapter).setEvents(events)
+        }
+
+        viewModel.selectedDate.observe(viewLifecycleOwner) { selectedDate ->
+            updateAdapterForDate(selectedDate)
+        }
+
         viewModel.title.observe(viewLifecycleOwner) {
             // TODO: make it look nicer
             binding.textView.text = it
+        }
+
+        if (savedInstanceState == null) {
+            binding.calendarView.post { selectDate(today) }
         }
     }
 
@@ -70,13 +175,20 @@ class CalendarFragment : Fragment(R.layout.calendar_fragment) {
         }
     }
 
-    private fun setupDateOnClickListener() {
-        TODO("Not yet implemented")
-    }
-
     private fun setupCalendarDayBinder() {
         class DayViewContainer(view: View) : ViewContainer(view) {
-            val textView = CalendarDayLayoutBinding.bind(view).calendarDayText
+            lateinit var day: CalendarDay // Will be set when this container is bound.
+            val binding = CalendarDayLayoutBinding.bind(view)
+            val textView = binding.calendarDayText
+            val dotView = binding.calendarDotView
+
+            init {
+                view.setOnClickListener {
+                    if (day.position == DayPosition.MonthDate) {
+                        selectDate(day.date)
+                    }
+                }
+            }
         }
 
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
@@ -85,16 +197,49 @@ class CalendarFragment : Fragment(R.layout.calendar_fragment) {
 
             // Called every time we need to reuse a container.
             override fun bind(container: DayViewContainer, data: CalendarDay) {
-                when (data.position == DayPosition.MonthDate) {
-                    true -> {
-                        container.textView.text = data.date.dayOfMonth.toString()
+                container.day = data
+                val textView = container.textView
+                val dotView = container.dotView
+
+                if (data.position == DayPosition.MonthDate) {
+                    textView.text = data.date.dayOfMonth.toString()
+                    when (data.date) {
+                        viewModel.selectedDate.value -> {
+                            textView.setBackgroundResource(R.drawable.selected_day)
+                            dotView.isVisible = false
+                        }
+                        else -> {
+                            container.textView.background = null
+                            // show the dot if there are events for this day
+                            // dotView.isVisible =
+                        }
                     }
-                    false -> {
-                        container.textView.text = null
-                    }
+                }
+                else {
+                    container.textView.text = null
+                    dotView.isVisible = false
                 }
                 // TODO: add selected date's background color
             }
+        }
+    }
+
+    private fun selectDate(date: LocalDate) {
+        if (viewModel.selectedDate.value != date) {
+            val oldDate = viewModel.selectedDate.value
+            viewModel.selectedDate.value = date
+            oldDate.let { binding.calendarView.notifyDateChanged(it!!) }
+            binding.calendarView.notifyDateChanged(date)
+
+            // TODO: update the adapter for the selected date
+            updateAdapterForDate(date)
+        }
+    }
+
+    private fun updateAdapterForDate(date: LocalDate) {
+        viewModel.events.value?.let { events ->
+            val eventsForDate = events.filter { it.time.toLocalDate() == date }
+            (binding.recyclerView.adapter as EventAdapter).setEvents(eventsForDate)
         }
     }
 
